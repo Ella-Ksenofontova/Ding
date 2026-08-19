@@ -1,0 +1,72 @@
+.header {
+    grid-column: span 2;
+    max-width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    background-color: #f1debe;
+}
+
+.header-logo {
+    max-height: 120px;
+    max-width: 50vw;
+}
+
+.notifications-button {
+    position: relative;
+    width: 70px;
+    height: 70px;
+    max-height: 15vw;
+    max-width: 15vw;
+}
+
+.notifications-button-image {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.have-new-notifications::after {
+    content: "";
+    position: absolute;
+    top: 20%;
+    right: 20%;
+    width: 10px;
+    height: 10px;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background-color: brown;
+}
+
+.notifications-list {
+    margin: 0;
+    padding: 0;
+}
+
+.notifications-list-item {
+    list-style-type: none;
+    display: flex;
+    gap: 7px;
+    align-items: center;
+}
+
+.notifications-list-item:not(:last-of-type) {
+    border-bottom: 1px solid #c8c6c6;
+}
+
+.notification-text {
+    margin: 0;
+}
+
+.is-read {
+    color: gray;
+}
+
+.notifications-popover {
+    position: absolute;
+    max-height: 200px;
+    overflow: auto;
+}

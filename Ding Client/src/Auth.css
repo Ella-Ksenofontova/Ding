@@ -1,0 +1,55 @@
+.auth-form {
+    max-width: 450px;
+}
+
+.logo {
+    max-height: 75px;
+    max-width: 100%;
+}
+
+.password-toggle-wrapper {
+    position: relative;
+}
+
+.password-toggler {
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    height: 1rem;
+    transform: translateY(-50%);
+}
+
+.auth-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-top: 10px;
+}
+
+.auth-field {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+}
+
+.auth-control {
+    border: 1px solid #c7c7c7;
+    border-radius: 5px;
+    width: 100%;
+    font-family: inherit;
+    min-height: 22.5px;
+}
+
+.auth-control:focus-visible {
+    outline: 1px solid rgb(230, 230, 230);
+}
+
+.auth-error-message {
+    max-width: 100%;
+}
+
+.remember-me-wrapper {
+    display: flex;
+    gap: 7px;
+    align-items: center;
+}

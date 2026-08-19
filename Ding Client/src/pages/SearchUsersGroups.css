@@ -1,0 +1,17 @@
+.search-users-input, .search-groups-input {
+    max-width: 500px;
+}
+
+.search-results {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-block: 20px;
+    padding: 0;
+}
+
+.search-result {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}

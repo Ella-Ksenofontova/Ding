@@ -1,0 +1,16 @@
+.avatar-edit {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 10px;
+}
+
+.edit-info {
+    margin-bottom: 15px;
+}
+
+.avatar-edit-buttons, .edit-buttons-panel {
+    display: flex;
+    gap: 7px;
+    align-items: center;
+}

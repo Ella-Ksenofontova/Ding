@@ -1,0 +1,16 @@
+.friends-wrapper {
+    margin-top: 30px;
+}
+
+.search-friends {
+    display: flex;
+    gap: 7px;
+    align-items: baseline;
+    width: fit-content;
+    padding: 10px;
+    border: 1px solid #f1debe;
+    border-radius: 7px;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+}

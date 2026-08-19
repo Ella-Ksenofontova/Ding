@@ -1,0 +1,10 @@
+.options-container {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.list-item::marker {
+    content: "> ";
+}

@@ -1,0 +1,66 @@
+.create-post-wrapper,
+.edit-post-wrapper {
+    max-width: 450px;
+}
+
+.attached-img {
+    max-width: 25vw;
+}
+
+.attached-images {
+    max-width: 90vw;
+}
+
+.attached-images,
+.attached-videos,
+.attached-audios {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 8px;
+    max-width: 100%;
+}
+
+.attached-img {
+    height: 100%;
+    object-fit: cover;
+}
+
+.select-file-wrapper {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.attached-files-preview {
+    margin-top: 10px;
+}
+
+.post-edit-buttons-panel {
+    display: flex;
+    gap: 10px;
+}
+
+.file-wrapper {
+    max-width: 100%;
+}
+
+.Button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 4px;
+	padding: 0 15px;
+	font-size: 15px;
+	line-height: 1;
+	font-weight: 500;
+	height: 35px;
+	user-select: none;
+}
+
+@media (max-width: 768px) {
+
+    .attached-img {
+        max-width: 100%;
+    }
+}

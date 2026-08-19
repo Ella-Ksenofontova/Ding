@@ -1,0 +1,19 @@
+.friend-avatar {
+    max-width: 60px;
+    max-height: 60px;
+    border-radius: 30%;
+}
+
+.friend-name {
+    margin: 0;
+}
+
+.friend {
+    display: flex;
+    gap: 10px;
+}
+
+.user-link {
+    text-decoration: none;
+    color: inherit;
+}

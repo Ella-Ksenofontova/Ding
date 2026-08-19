@@ -1,0 +1,72 @@
+body {
+    --header-color: #2785f1;
+}
+
+.heading {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    font-weight: normal;
+}
+
+.main {
+    padding: 20px;
+}
+
+.table-heading {
+    font-weight: 500;
+}
+
+.scrollable {
+    max-width: 100%;
+    overflow: auto;
+}
+
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.create-form {
+    max-width: 600px;
+}
+
+.button-wrapper {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+
+button,
+.btn {
+    flex-basis: fit-content;
+}
+
+.buttons-panel {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.avatar-add-wrapper {
+    margin-block: 20px;
+}
+
+.tools {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    margin-block: 10px;
+}
+
+.create-button {
+    margin-top: 15px;
+}

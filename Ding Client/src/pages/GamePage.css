@@ -1,0 +1,9 @@
+.game-frame {
+    width: min(100%, 750px);
+    min-height: 500px;
+}
+
+.game-container {
+    max-width: 100%;
+    overflow: auto;
+}

@@ -1,0 +1,46 @@
+.info-about-group {
+    display: grid;
+    grid-template-columns: min-content 1fr;
+    gap: 10px;
+    width: calc(100% + 30px);
+    padding: 10px;
+    background: linear-gradient(rgb(255, 243, 222), transparent);
+    transform: translate(-30px, -20px);
+}
+
+.group-name {
+    margin: 0;
+}
+
+.group-members, .change-membership-button {
+    grid-column: 2;
+}
+
+.group-members {
+    display: flex;
+    gap: 7px;
+    align-items: baseline;
+}
+
+.change-membership-button {
+    width: fit-content;
+    cursor: pointer;
+}
+
+.view-members-button {
+    cursor: pointer;
+}
+
+.members-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 60vh;
+    overflow: auto;
+}
+
+.members-list-item {
+    display: flex;
+    gap: 7px;
+    align-items: center;
+}

@@ -1,0 +1,9 @@
+.add-file-wrapper {
+    margin-block: 20px;
+}
+
+.file-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}

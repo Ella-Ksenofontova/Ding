@@ -1,0 +1,64 @@
+name: ding
+
+services:
+ frontend-admin:
+    build: 
+      context: "./Ding Admin Panel"
+      dockerfile: .Dockerfile
+    container_name: frontend-admin
+    restart: no
+    volumes:
+      - "./Ding Admin Panel:/app"     
+      - /app/node_modules
+    depends_on:
+      - backend
+    environment:
+      - NODE_ENV=development
+      - DOCKER_HOST=0.0.0.0
+    ports:
+      - "5173:5173"
+ backend:
+    build:
+      context: ./Ding Server
+      dockerfile: Dockerfile
+    container_name: backend
+    environment:
+      - DOCKER_HOST=0.0.0.0
+    restart: no
+    depends_on:
+      - postgres
+    ports:
+      - "8000:8000"
+    volumes:
+      - "./Ding Server:/app"  
+      - /app/.venv  
+ postgres:
+    image: postgres:18
+    container_name: postgres
+    environment:
+      - POSTGRES_PASSWORD=1234
+      - DOCKER_HOST=0.0.0.0
+    restart: no
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql
+ frontend-user:
+    build: 
+      context: "./Ding Client"
+      dockerfile: Dockerfile
+    container_name: frontend-user
+    restart: no
+    volumes:
+      - "./Ding Client:/app"     
+      - /app/node_modules
+    depends_on:
+      - backend
+    environment:
+      - NODE_ENV=development
+      - DOCKER_HOST=0.0.0.0
+    ports:
+      - "8080:8080"
+
+volumes:
+  postgres_data:

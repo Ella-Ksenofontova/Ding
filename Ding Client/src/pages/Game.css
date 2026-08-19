@@ -1,0 +1,23 @@
+.game-card {
+    max-width: 250px;
+    flex-basis: min(450px, 100%);
+}
+
+.game-preview {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+}
+
+.game-name {
+    margin-block: 10px;
+}
+
+.game-link {
+    text-decoration: none;
+    color: inherit;
+}
+
+.game-description {
+    margin: 0;
+}

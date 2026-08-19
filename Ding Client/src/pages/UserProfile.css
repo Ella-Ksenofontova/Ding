@@ -1,0 +1,8 @@
+.posts-wrapper {
+    margin-top: 20px;
+}
+
+.user-buttons-panel {
+    display: flex;
+    gap: 10px;
+}

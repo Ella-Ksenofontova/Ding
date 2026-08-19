@@ -1,0 +1,8 @@
+.groups-wrapper {
+    margin-top: 30px;
+}
+
+.groups-buttons-panel {
+    display: flex;
+    gap: 7px;
+}

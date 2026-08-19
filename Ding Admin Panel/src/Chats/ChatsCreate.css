@@ -1,0 +1,18 @@
+.info-paragraph {
+    margin: 0;
+}
+
+.auto-generation-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+}
+
+.tooltip-inner {
+    padding: 10px;
+    border: 1px solid rgb(199, 199, 199);
+    border-radius: 5px;
+    background-color: white;
+    font-size: 0.8rem;
+}

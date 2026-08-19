@@ -1,0 +1,34 @@
+.preview, .attached-files {
+    margin-bottom: 10px;
+    padding-block: 15px;
+}
+
+.error-message {
+    color: red;
+}
+
+.preview-img, .attached-img {
+    max-height: 175px;
+}
+
+.preview-video, .attached-video {
+    max-width: 40vw;
+}
+
+.attached-files, .attached-images {
+    width: fit-content;
+    max-width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.attached-files {
+    flex-direction: column;
+}
+
+@media (max-width: 768px) {
+    .preview-video, .attached-video {
+    max-width: 100%;
+}
+}

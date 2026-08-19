@@ -1,0 +1,22 @@
+.group {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    column-gap: 10px;
+}
+
+.group-name {
+    margin: 0;
+}
+
+.group-avatar {
+    grid-row: span 2;
+    max-height: 60px;
+    max-width: 60px;
+    border-radius: 30%;
+}
+
+.group-link {
+    text-decoration: none;
+    color: inherit;
+}

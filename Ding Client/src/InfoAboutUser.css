@@ -1,0 +1,50 @@
+.main-information {
+    display: grid;
+    grid-template-columns: min-content 1fr;
+    column-gap: 7px;
+    row-gap: 5px;
+    align-items: center;
+    margin-top: 15px;
+}
+
+.user-status {
+    grid-column: 2;
+    max-width: 100%;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.additional-information {
+    padding: 0;
+    padding-left: 47px;
+    margin-block: 10px;
+}
+
+.additional-info-item {
+    list-style-type: none;
+}
+
+.info-about-user {
+    background: linear-gradient(rgb(255, 243, 222), transparent);
+    padding: 10px;
+    width: calc(100% + 30px);
+    transform: translate(-30px, -20px);
+}
+
+.username {
+    margin: 0;
+}
+
+.avatar-with-badge {
+    position: relative;
+}
+
+.online-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: greenyellow;
+}
