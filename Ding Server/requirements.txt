@@ -1,0 +1,11 @@
+fastapi >= 0.139.0
+psycopg2 >= 2.9.12
+pydantic >= 2.13.4
+sqlmodel >= 0.0.39
+uvicorn >= 0.51.0
+phonenumbers >= 9.0.34
+pydantic_extra_types >= 2.11.1
+pydantic[email]
+python-frontmatter >= 1.3.0
+pyjwt >= 2.13.0
+python-multipart >= 0.0.32
