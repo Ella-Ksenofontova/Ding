@@ -1,0 +1,23 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    text-align: center;
+}
+
+.title {
+    font-weight: normal;
+}
+
+.button {
+    display: inline-block;
+    padding: 5px 10px;
+    border: 1px solid rgb(162, 209, 250);
+    border-radius: 7px;
+    text-decoration: none;
+    color: inherit;
+    background-color: rgb(199, 227, 252);
+}
+
+.link {
+    color: rgb(112, 182, 244);
+    text-decoration: none;
+}

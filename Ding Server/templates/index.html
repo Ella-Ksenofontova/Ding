@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Добро пожаловать!</title>
+     <link href="{{ url_for('static', path='/styles.css') }}" rel="stylesheet">
+</head>
+<body>
+    <figure>
+        <img src="{{ url_for('static', path='/server.png') }}" alt="Картинка с телефоном, над которым - земной шар" height="450">
+        <figcaption>Источник изображения: <a href="https://storyset.com/" class="link">storyset.com</a></figcaption>
+    </figure>
+    <h1 class="title">Добро пожаловать на сервер Ding!</h1>
+    <a href="/docs" class="button">Читать документацию (на английском)</a>
+</body>
+</html>

@@ -14,6 +14,7 @@ Ding - "Соцсеть" для кукол
 [Скачать базу данных](https://drive.google.com/file/d/1vTBPpcIXkLXHArnZx_4-6RD1fbPRpqfZ/view?usp=sharing)  
 Для корректной работы с ней также понадобится скачать два SWF файла.  
 [Папка с SWF-файлами](https://drive.google.com/drive/folders/1Fy8oLOjPqDZbtP7hQwr7_eSs4qV5W2cX?usp=drive_link)
+4. Другой путь - удалить файл `.initialized` в паке `Ding Server`, а затем перейти к шагу 2. Специальный скрипт заполнит базу данных некоторой начальной информацией.
 
 TODO
 ---

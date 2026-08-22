@@ -15,9 +15,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-USER appuser
-EXPOSE 3000
+RUN chmod +x /app/entrypoint.sh
 
 ENTRYPOINT ["/app/entrypoint.sh"]
+
+USER appuser
+EXPOSE 3000
 
 CMD ["uvicorn", "main:app", "--host=0.0.0.0", "--port=8000", "--reload"]

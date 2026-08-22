@@ -19,7 +19,7 @@ services:
       - "5173:5173"
  backend:
     build:
-      context: ./Ding Server
+      context: "./Ding Server"
       dockerfile: Dockerfile
     container_name: backend
     environment:

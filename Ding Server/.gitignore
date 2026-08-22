@@ -1,1 +1,5 @@
 old_site/*
+old_site
+
+__pycache__
+.venv
