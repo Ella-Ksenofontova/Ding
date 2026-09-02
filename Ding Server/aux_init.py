@@ -5,6 +5,7 @@ TRANSLITERATIONS = {
 }
 
 def transliterate_name(name: str):
+    "Transliterates a given name from Cyrillic to Latin characters, replacing spaces with underscores and removing non-ASCII characters. Returns the transliterated name. Note: this function is very simple, so there can be abnormalities in the transliteration of some characters."
     new_name = ""
 
     for char in name:
@@ -21,6 +22,7 @@ def transliterate_name(name: str):
     return new_name
 
 def get_file_as_base64(path: str):
+    "Encodes file with given path"
     with open(path, "rb") as image_file:
         encoded_bytes = base64.b64encode(image_file.read())
         return encoded_bytes.decode("utf-8")

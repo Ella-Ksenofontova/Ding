@@ -3,7 +3,7 @@ import notificationsImg from "./assets/notifications.png"
 import { VisuallyHidden } from "radix-ui";
 import "./Header.css"
 import { Button, Popover } from "@radix-ui/themes";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { type Notification } from "./types";
 import { marked } from "https://cdn.jsdelivr.net/npm/marked/lib/marked.esm.js";
 import DOMPurify from "dompurify";
@@ -15,7 +15,7 @@ function Header() {
     const [myId, setMyId] = useState<number | null>(null);
     const [isLoading, setIsLoading] = useState({ myNotifications: true, myId: true });
 
-    if (isLoading.myId) {
+    useEffect(() => {
         const userResponse = fetch("/api/info-about-me", {
             headers: {
                 "Authorization": `Bearer ${getCookie("jwt-token")}`
@@ -34,16 +34,18 @@ function Header() {
 
             }
         }).finally(() => setIsLoading({ ...isLoading, myId: false }));
-    }
+    }, []);
 
-    if (myId && isLoading.myNotifications) {
-        const response = fetch(`/api/user-notifications/${myId}`);
-        response.then(res => {
-            if (res.ok) return res.json();
-        }).then(data => {
-            if (data) setNotifications(data);
-        }).finally(() => setIsLoading({ ...isLoading, myNotifications: false }))
-    }
+    useEffect(() => {
+        if (myId) {
+            const response = fetch(`/api/user-notifications/${myId}`);
+            response.then(res => {
+                if (res.ok) return res.json();
+            }).then(data => {
+                if (data) setNotifications(data);
+            }).finally(() => setIsLoading({ ...isLoading, myNotifications: false }))
+        }
+    }, [myId]);
 
     function handleMarkAsRead(notification: Notification) {
         const reqBody = {

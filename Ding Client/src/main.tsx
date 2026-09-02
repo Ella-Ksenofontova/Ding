@@ -19,24 +19,23 @@ import GamePage from './pages/GamePage.tsx';
 import SearchUsers from './pages/SearchUsers.tsx';
 import SearchGroups from './pages/SearchGroups.tsx';
 
-
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <Theme accentColor='amber' grayColor='olive'>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={getCookie("jwt-token") ? <Homepage /> : <Auth hasAccount={true} />} />
-          <Route path="/login" element={<Auth hasAccount={true} />} />
-          <Route path="/sign-up" element={<Auth hasAccount={false} />} />
-          <Route path="/my-profile" element={getCookie("jwt-token") ? <MyProfile /> : <Auth hasAccount={true} />} />
-          <Route path="/chats" element={getCookie("jwt-token") ? <Chats /> : <Auth hasAccount={true} />} />
-          <Route path="/groups" element={getCookie("jwt-token") ? <Groups /> : <Auth hasAccount={true} />} />
-          <Route path="/friends" element={getCookie("jwt-token") ? <Friends /> : <Auth hasAccount={true} />} />
-          <Route path="/games" element={getCookie("jwt-token") ? <Games /> : <Auth hasAccount={true} />} />
-          <Route path="/chats/:id" element={getCookie("jwt-token") ? <ChatPage /> : <Auth hasAccount={true} />} />
+          <Route path="/" element={getCookie("jwt-token") && getCookie("jwt-token") !== "None" ? <Homepage /> : <Auth hasAccount={true} />} />
+          <Route path="/login" element={getCookie("jwt-token") && getCookie("jwt-token") !== "None" ? <Homepage /> : <Auth hasAccount={true} />} />
+          <Route path="/sign-up" element={getCookie("jwt-token") && getCookie("jwt-token") !== "None" ? <Homepage /> : <Auth hasAccount={false} />} />
+          <Route path="/my-profile" element={getCookie("jwt-token") && getCookie("jwt-token") !== "None" ? <MyProfile /> : <Auth hasAccount={true} />} />
+          <Route path="/chats" element={getCookie("jwt-token") && getCookie("jwt-token") !== "None" ? <Chats /> : <Auth hasAccount={true} />} />
+          <Route path="/groups" element={getCookie("jwt-token") && getCookie("jwt-token") !== "None" ? <Groups /> : <Auth hasAccount={true} />} />
+          <Route path="/friends" element={getCookie("jwt-token") && getCookie("jwt-token") !== "None" ? <Friends /> : <Auth hasAccount={true} />} />
+          <Route path="/games" element={getCookie("jwt-token") && getCookie("jwt-token") !== "None" ? <Games /> : <Auth hasAccount={true} />} />
+          <Route path="/chats/:id" element={getCookie("jwt-token") && getCookie("jwt-token") !== "None" ? <ChatPage /> : <Auth hasAccount={true} />} />
           <Route path="/users/:id" element={<UserProfile />} />
           <Route path="/groups/:id" element={<GroupPage />} />
-          <Route path="/games/:id" element={getCookie("jwt-token") ? <GamePage /> : <Auth hasAccount={true} />} />
+          <Route path="/games/:id" element={getCookie("jwt-token") && getCookie("jwt-token") !== "None" ? <GamePage /> : <Auth hasAccount={true} />} />
           <Route path="/search-users" element={<SearchUsers />} />
           <Route path="/search-groups" element={<SearchGroups />} />
         </Routes>

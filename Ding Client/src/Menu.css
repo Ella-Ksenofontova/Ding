@@ -14,7 +14,91 @@
     padding: 20px 10px;
 }
 
+.menu-link, .menu-item-button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #97520e;
+}
+
+.mobile-visible-only {
+    display: none;
+}
+
+
+.menu-list-item {
+    list-style: none;
+}
+
 .menu-link {
     color: #97520e;
     text-decoration: none;
+}
+
+.popover-content {
+    display: none;
+}
+
+@media (max-width: 576px) {
+    .menu {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 60px;
+        z-index: 1000;
+    }
+
+    .menu-list {
+        flex-direction: row;
+        justify-content: space-around;
+        padding: 10px 0;
+        font-size: 0.6rem;
+    }
+
+    .menu-link, .menu-item-button {
+        flex-direction: column;
+        gap: 5px;
+        text-align: center;
+    }
+
+    .menu-item-button {
+        font-family: inherit;
+        font-size: 0.6rem;
+        cursor: pointer;
+    }
+
+    .mobile-hidden {
+        display: none;
+    }
+
+    .mobile-visible-only {
+        display: flex;
+    }
+
+    .popover-content {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .popover-menu-list {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        margin: 0;
+        padding: 10px;
+        border-radius: 5px;
+    }
+
+    .popover-menu-item {
+        list-style: none;
+    }
+
+    .popover-menu-link {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 10px;
+    }
 }

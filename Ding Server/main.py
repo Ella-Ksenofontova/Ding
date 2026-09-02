@@ -33,6 +33,7 @@ app.include_router(chats_router)
 
 @app.get("/", response_class=HTMLResponse)
 def get_homepage(req: Request):
+    "Returns homepage in HTML format."
     return templates.TemplateResponse(
         request=req, name="index.html"
     )

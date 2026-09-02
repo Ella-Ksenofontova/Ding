@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { type Toast, type User } from "../types";
 import { getCookie } from "../auxFunctions";
 import Header from "../Header";
@@ -9,22 +9,12 @@ import ToastsContainer from "../ToastsContainer";
 import "./Friends.css"
 
 function Friends() {
-    const files = document.querySelectorAll(".friend-avatar") as NodeListOf<HTMLImageElement | HTMLVideoElement | HTMLAudioElement>;
-    for (let file of files) {
-        const src = file.src;
-        try {
-            URL.revokeObjectURL(src);
-        } catch {
-            // Here we don't have to do anythiing:)
-        }
-    }
-
     const [myFriends, setMyFriends] = useState<User[]>([]);
     const [myId, setMyId] = useState<number | null>(null);
     const [isLoading, setIsLoading] = useState({ myId: true, myFriends: true });
     const [toasts, setToasts] = useState<Toast[]>([]);
 
-    if (isLoading.myId) {
+    useEffect(() => {
         const userResponse = fetch("/api/info-about-me", {
             headers: {
                 "Authorization": `Bearer ${getCookie("jwt-token")}`
@@ -43,7 +33,7 @@ function Friends() {
 
             }
         }).finally(() => setIsLoading({ ...isLoading, myId: false }));
-    }
+    }, []);
 
     if (myId && isLoading.myFriends) {
         const response = fetch(`/api/user-friends/${myId}`);

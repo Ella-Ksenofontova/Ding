@@ -10,11 +10,13 @@ comments_router = APIRouter(tags=["comments"])
 
 @comments_router.get("/comments")
 def get_comments(session: Session = Depends(get_session)) -> list[db_models.Comment]:
+    "Finds all comments from the database."
     comments = list(session.exec(select(db_models.Comment)).all())
     return comments
 
 @comments_router.get("/comments/{id:int}")
 def get_comment_by_id(id: int, session: Session = Depends(get_session)) -> db_models.Comment:
+    "Attempts to find comment with given id. If found, returns it to client, otherwise raises HTPPException with stsatus code 404"
     comment = session.exec(select(db_models.Comment).where(db_models.Comment.id == id)).first()
     if not comment:
         raise HTTPException(404, "Комментария с таким ID не существует")
@@ -22,6 +24,7 @@ def get_comment_by_id(id: int, session: Session = Depends(get_session)) -> db_mo
 
 @comments_router.get("/post-comments/{post_id:int}", response_model=List[api_models.CommentGet])
 def get_post_comments(post_id: int, session: Session = Depends(get_session)): 
+    "Finds comments that have been left to the post with given id."
     db_comments = list(session.exec(select(db_models.Comment).where(db_models.Comment.post_id == post_id)).all())
     response_comments = []
     for db_comment in db_comments:
@@ -37,6 +40,7 @@ def get_post_comments(post_id: int, session: Session = Depends(get_session)):
 
 @comments_router.get("/search-comments/{text_or_id:str}", response_model=List[api_models.CommentGet])
 def get_comments_by_text_or_id(text_or_id: str, session: Session = Depends(get_session)):
+    "Finds comments that have text or id starting with query string."
     comments = list(session.exec(select(db_models.Comment).where(db_models.Comment.text != None, db_models.Comment.text.startswith(text_or_id))).all()) # type: ignore
     if text_or_id.isdigit():
         comments_with_id = list(session.exec(select(db_models.Comment).where(cast(db_models.Comment.id, String).like(f"{text_or_id}%"))).all())
@@ -46,12 +50,14 @@ def get_comments_by_text_or_id(text_or_id: str, session: Session = Depends(get_s
 
 @comments_router.post("/comments")
 def add_comment(comment: db_models.Comment, session: Session = Depends(get_session)):
+    "Adds comment to the database."
     session.merge(comment)
     session.commit()
     return Response(content="Данные успешно сохранены")
 
 @comments_router.delete("/comments/{id}")
 def delete_comment(id: int, session: Session = Depends(get_session)):
+    "Deletes comment from the database."
     comment = session.exec(select(db_models.Comment).where(db_models.Comment.id == id)).first()
     if not comment:
         raise HTTPException(404, "Такого комментария не существует")

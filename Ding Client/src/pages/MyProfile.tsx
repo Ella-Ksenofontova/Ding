@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { type User, type Post as PostType, type Toast as ToastType } from "../types";
 import CreatePost from "../CreatePost";
 import InfoAboutUser from "../InfoAboutUser";
@@ -21,7 +21,7 @@ function MyProfile() {
     const [postToEdit, setPostToEdit] = useState<PostType | null>(null);
     const [postToDeleteId, setPostToDeleteId] = useState<number | null>(null);
 
-    if (isLoading.infoAboutMe) {
+    if (isLoading.infoAboutMe && !infoAboutMe) {
         const userResponse = fetch("/api/info-about-me", {
             headers: {
                 "Authorization": `Bearer ${getCookie("jwt-token")}`
@@ -42,22 +42,24 @@ function MyProfile() {
         }).finally(() => setIsLoading({ ...isLoading, infoAboutMe: false }));
     }
 
-    if (isLoading.posts && infoAboutMe?.id) {
-        const postsResponse = fetch(`/api/user-posts/${infoAboutMe.id}`);
-        postsResponse.then(res => {
-            if (res.ok) {
-                return res.json()
-            } else {
-                setToasts(toasts.concat({ headerContent: "Ошибка", bodyContent: "Не удалось получить посты с сервера" }));
-                setTimeout(() => setToasts(toasts.filter((_, index) => index != toasts.length - 1)), TOAST_DURATION);
-                throw new Error("Не удалось получить посты с сервера")
-            }
-        }).then(json => {
-            if (json) setMyPosts(json);
-        }).finally(() => {
-            setIsLoading({ ...isLoading, posts: false });
-        });
-    }
+    useEffect(() => {
+        if (isLoading.posts && infoAboutMe?.id) {
+            const postsResponse = fetch(`/api/user-posts/${infoAboutMe.id}`);
+            postsResponse.then(res => {
+                if (res.ok) {
+                    return res.json()
+                } else {
+                    setToasts(toasts.concat({ headerContent: "Ошибка", bodyContent: "Не удалось получить посты с сервера" }));
+                    setTimeout(() => setToasts(toasts.filter((_, index) => index != toasts.length - 1)), TOAST_DURATION);
+                    throw new Error("Не удалось получить посты с сервера")
+                }
+            }).then(json => {
+                if (json) setMyPosts(json);
+            }).finally(() => {
+                setIsLoading({ ...isLoading, posts: false });
+            });
+        }
+    }, [infoAboutMe?.id]);
 
     return (
         <>

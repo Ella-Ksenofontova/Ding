@@ -1,6 +1,6 @@
 import { Button, IconButton, Popover } from "@radix-ui/themes";
 import { PlusIcon, InfoCircledIcon } from "@radix-ui/react-icons";
-import { useRef, useState, type SetStateAction } from "react";
+import { useState, type SetStateAction } from "react";
 import TextareaWithFormattingButtons from "./TextareaWithFormattingButtons";
 import { type Toast as ToastType, type Post } from "./types";
 import "./CreateEditPost.css"
@@ -23,18 +23,10 @@ function CreatePost({ currentUserId, onPostsUpdate }: CreatePostProps) {
     const [text, setText] = useState("");
     const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
     const [toasts, setToasts] = useState<ToastType[]>([]);
-    const createPostWrapper = useRef<HTMLDivElement | null>(null);
+    const [filesSources, setFilesSources] = useState<string[]>([]);
 
-    if (createPostWrapper.current) {
-        const files = document.querySelectorAll(".attached-img, .attached-video, .attached-audio") as NodeListOf<HTMLImageElement | HTMLVideoElement | HTMLAudioElement>;
-        for (let file of files) {
-            const src = file.src;
-            try {
-                URL.revokeObjectURL(src);
-            } catch {
-                // Here we don't have to do anythiing:)
-            }
-        }
+    if (filesSources.length !== attachedFiles.length) {
+        setFilesSources(attachedFiles.map(file => URL.createObjectURL(file)));
     }
 
     async function getAttachedFilesAsBase64() {
@@ -71,7 +63,7 @@ function CreatePost({ currentUserId, onPostsUpdate }: CreatePostProps) {
             response.then(res => {
                 if (res.ok) {
                     setToasts(toasts.concat({ headerContent: "Уведомление", bodyContent: "Пост опубликован" }));
-                    updatePosts();
+                    onPostsUpdate(prev => [{...responseBody, id: prev[0]?.id + 1, usersLiked: [], date: responseBody.date.toISOString() }, ...prev]);
                     setText("");
                     setAttachedFiles([]);
                 } else {
@@ -81,22 +73,8 @@ function CreatePost({ currentUserId, onPostsUpdate }: CreatePostProps) {
         })
     }
 
-    function updatePosts() {
-        const latestPostResponse = fetch("/api/latest-posts/1");
-
-        latestPostResponse.then(res => {
-            if (res.ok) {
-                return res.json();
-            } else {
-                setToasts(toasts.concat({ headerContent: "Ошибка", bodyContent: "Не удалось получить посты с сервера" }));
-            }
-        }).then(json => {
-            if (json) onPostsUpdate(json);
-        });
-    }
-
     return (
-        <div className="create-post-wrapper" ref={createPostWrapper}>
+        <div className="create-post-wrapper">
             <h2 className="heading"><label htmlFor="text">О чём думаете?</label></h2>
             <TextareaWithFormattingButtons id="text" text={text} setText={setText} />
             <input type="file" hidden id="file-selector" accept="audio/*,image/*,video/*" onChange={(event) => {
@@ -142,7 +120,7 @@ function CreatePost({ currentUserId, onPostsUpdate }: CreatePostProps) {
                     {
                         attachedFiles.filter(item => IMAGE_EXTENSIONS.includes(item.name.slice(item.name.lastIndexOf(".")))).map((item, index) =>
                             <div className="file-wrapper">
-                                <img className="attached-img" src={URL.createObjectURL(item)} key={index} alt={`Изображение ${index + 1}`} />
+                                <img className="attached-img" src={filesSources[attachedFiles.indexOf(item)]} key={index} alt={`Изображение ${index + 1}`} />
                                 <Button color="red" onClick={() => setAttachedFiles(attachedFiles.filter(i => i !== item))}>Удалить</Button>
                             </div>
                         )
@@ -152,7 +130,7 @@ function CreatePost({ currentUserId, onPostsUpdate }: CreatePostProps) {
                     {
                         attachedFiles.filter(item => VIDEO_EXTENSIONS.includes(item.name.slice(item.name.lastIndexOf(".")))).map((item, index) =>
                             <div className="file-wrapper">
-                                <video controls className="attached-video" src={URL.createObjectURL(item)} key={index} />
+                                <video controls className="attached-video" src={filesSources[attachedFiles.indexOf(item)]} key={index} />
                                 <Button color="red" onClick={() => setAttachedFiles(attachedFiles.filter(i => i !== item))}>Удалить</Button>
                             </div>
                         )
@@ -162,7 +140,7 @@ function CreatePost({ currentUserId, onPostsUpdate }: CreatePostProps) {
                     {
                         attachedFiles.filter(item => AUDIO_EXTENSIONS.includes(item.name.slice(item.name.lastIndexOf(".")))).map((item, index) =>
                             <div className="file-wrapper">
-                                <audio controls className="attached-audio" src={URL.createObjectURL(item)} key={index} />
+                                <audio controls className="attached-audio" src={filesSources[attachedFiles.indexOf(item)]} key={index} />
                                 <Button color="red" onClick={() => setAttachedFiles(attachedFiles.filter(i => i !== item))}>Удалить</Button>
                             </div>
                         )

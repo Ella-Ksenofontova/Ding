@@ -38,16 +38,6 @@ function getDateAccordingToTimezone(dateStr: string) {
 }
 
 function UsersCreate({ label }: CreateProps) {
-    const files = document.querySelectorAll("img") as NodeListOf<HTMLImageElement>;
-    for (let file of files) {
-        const src = file.src;
-        try {
-            URL.revokeObjectURL(src);
-        } catch {
-            // Here we don't have to do anythiing:)
-        }
-    }
-
     document.title = `${label} пользователя`
     const { id: userId } = useParams();
 
@@ -95,7 +85,6 @@ function UsersCreate({ label }: CreateProps) {
                         setAvatarIsLocal(true);
                         setFileObj(file);
                     } catch (err) {
-                        if (err) console.log(err);
                         setAvatar(data.avatar);
                         setAvatarIsLocal(false);
                     }

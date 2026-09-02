@@ -14,7 +14,7 @@ type EditDialogProps = {
 }
 
 function EditProfileDialog({ isOpen, setIsOpen, infoAboutUser }: EditDialogProps) {
-    const [avatar, setAvatar] = useState<string | File>(getFileFromBase64Safely(infoAboutUser.avatar || ""));
+    const [avatar, setAvatar] = useState<string | File>(getFileFromBase64Safely(infoAboutUser.avatar as string || ""));
     const [updatedInfo, setUpdatedInfo] = useState(infoAboutUser);
     const updateInfo = useContext(UpdateInfoContext);
     const toasts = useContext(ToastsContext);

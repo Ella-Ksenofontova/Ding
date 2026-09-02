@@ -2,7 +2,7 @@ import { Skeleton, Avatar, Button, Popover, IconButton } from "@radix-ui/themes"
 import { HeartIcon, HeartFilledIcon, ChatBubbleIcon, Share2Icon, DotsHorizontalIcon, PlusIcon, InfoCircledIcon } from "@radix-ui/react-icons";
 import { VisuallyHidden } from "radix-ui";
 import { type Post as PostType, type Toast as ToastType, type Group, type User, type HasUsernameAndId, type Comment } from "./types"
-import { useState, type SetStateAction, useRef } from "react"
+import { useState, useEffect, type SetStateAction } from "react"
 import { marked } from "https://cdn.jsdelivr.net/npm/marked/lib/marked.esm.js";
 import DOMPurify from "dompurify";
 import "./Post.css"
@@ -15,9 +15,8 @@ type PostProps = PostType & { currentUser?: HasUsernameAndId & { avatar?: string
 type PostAuthor = {
     id: number,
     name: string,
-    avatar?: string | File,
+    avatar?: string,
 }
-
 
 function checkIfExtensionIsApproved(src: string) {
     const extension = src.slice(src.lastIndexOf("."));
@@ -27,29 +26,22 @@ function checkIfExtensionIsApproved(src: string) {
 
 function Post(props: PostProps) {
     const [postInfo, setPostInfo] = useState(props);
-    const [isAuthorDataLoading, setIsAuthorDataLoading] = useState(true);
+    const [attachedFilesSources, setAttachedFilesSources] = useState<string[]>([]);
     const [authorData, setAuthorData] = useState<PostAuthor | null>(null);
+    const [authorAvatar, setAuthorAvatar] = useState<string | null>(null);
     const [toasts, setToasts] = useState<ToastType[]>([]);
     const [areCommentsOpen, setAreCommentsOpen] = useState(false);
     const [comments, setComments] = useState<Comment[]>([]);
     const [currentCommentText, setCurrentCommentText] = useState("");
     const [currentCommentMedia, setCurrentCommentMedia] = useState<File[]>([]);
     const [areCommentsLoading, setAreCommentsLoading] = useState(true);
-    const postWrapper = useRef<HTMLDivElement | null>(null);
 
-    if (postWrapper.current) {
-        const files = postWrapper.current.querySelectorAll(".attached-img, .attached-video, .attached-audio, .comment-img, .comment-video, .comment-audio") as NodeListOf<HTMLImageElement | HTMLVideoElement | HTMLAudioElement>;
-        for (let file of files) {
-            const src = file.src;
-            try {
-                URL.revokeObjectURL(src);
-            } catch {
-                // Here we don't have to do anythiing:)
-            }
-        }
+    if (attachedFilesSources.length !== postInfo.media.length) {
+        setAttachedFilesSources(postInfo.media.map(item => typeof item.fileData === "string" ? getFileFromBase64Safely(item.fileData) : URL.createObjectURL(item.fileData)));
     }
 
-    if (isAuthorDataLoading) {
+
+    useEffect(() => {
         let response;
         if (postInfo.isGroup) {
             response = fetch(`/api/groups/${postInfo.userOrGroupId}`);
@@ -63,25 +55,21 @@ function Post(props: PostProps) {
             } else {
                 setToasts(toasts.concat({ headerContent: "Ошибка", bodyContent: "Не удалось получить данные об авторе поста" }));
             }
-        }).then((json: Group | User) => {
-            try {
-                const avatar = base64ToFile(json.avatar || "");
+        }).then((json: (Group | User) & { avatar?: string }) => {
+            if (json) {
                 setAuthorData({
+                    id: json.id,
                     name: "name" in json ? json.name : json.username,
-                    avatar: URL.createObjectURL(avatar),
-                    id: json.id
-                })
+                });
 
-            } catch {
-                setAuthorData({
-                    name: "name" in json ? json.name : json.username,
-                    avatar: json.avatar,
-                    id: json.id
-                })
+                if (!authorAvatar) {
+                    setAuthorAvatar(getFileFromBase64Safely(json.avatar || ""));
+                }
+            } else {
+                setAuthorData({ id: -1, name: "Неизвестно" });
             }
-
-        }).finally(() => setIsAuthorDataLoading(false))
-    }
+        });
+    }, []);
 
     if (areCommentsLoading) {
         const response = fetch(`/api/post-comments/${postInfo.id}`);
@@ -119,7 +107,7 @@ function Post(props: PostProps) {
             });
 
             response.then(res => {
-                if(res.ok) {
+                if (res.ok) {
                     setCurrentCommentMedia([]);
                     setCurrentCommentText("");
                     setAreCommentsLoading(true);
@@ -132,12 +120,12 @@ function Post(props: PostProps) {
 
     return (
         <>
-            <div className="post-wrapper" ref={postWrapper}>
+            <div className="post-wrapper">
                 <div className="author-info">
-                    <Skeleton loading={isAuthorDataLoading}>
-                        <Avatar src={authorData && authorData.avatar ? typeof authorData.avatar === "string" ? authorData.avatar : URL.createObjectURL(authorData.avatar) : ""} fallback={authorData?.name[0] || "U"} />
+                    <Skeleton loading={!authorAvatar}>
+                        <Avatar src={authorAvatar || ""} fallback={authorData?.name[0] || "U"} />
                     </Skeleton>
-                    <Skeleton loading={isAuthorDataLoading}><a className="post-author-link" href={`/${postInfo.isGroup ? "groups" : "users"}/${postInfo.userOrGroupId}`}>{authorData?.name || "Неизвестный пользователь"}</a></Skeleton>
+                    <Skeleton loading={!authorData}><a className="post-author-link" href={`/${postInfo.isGroup ? "groups" : "users"}/${postInfo.userOrGroupId}`}>{authorData?.name || "Неизвестно"}</a></Skeleton>
                     {postInfo.currentUser?.id === authorData?.id ?
                         <Popover.Root>
                             <div className="post-actions">
@@ -171,7 +159,7 @@ function Post(props: PostProps) {
                         {
                             postInfo.media.filter(item => IMAGE_EXTENSIONS.includes(item.url.slice(item.url.lastIndexOf(".")))).map((item, index) =>
                                 <div className="file-wrapper" key={index}>
-                                    <img className="attached-img" src={typeof item.fileData === "string" ? (item.fileData === item.url ? item.fileData : URL.createObjectURL(base64ToFile(item.fileData))) : URL.createObjectURL(item.fileData)} key={index} alt={`Изображение ${index + 1}`} />
+                                    <img className="attached-img" src={attachedFilesSources[postInfo.media.indexOf(item)]} key={index} alt={`Изображение ${index + 1}`} />
                                 </div>
                             )
                         }
@@ -180,7 +168,7 @@ function Post(props: PostProps) {
                         {
                             postInfo.media.filter(item => VIDEO_EXTENSIONS.includes(item.url.slice(item.url.lastIndexOf(".")))).map((item, index) =>
                                 <div className="file-wrapper" key={index}>
-                                    <video controls className="attached-video" src={typeof item.fileData === "string" ? (item.fileData === item.url ? item.fileData : URL.createObjectURL(base64ToFile(item.fileData))) : URL.createObjectURL(item.fileData)} key={index} />
+                                    <video controls className="attached-video" src={attachedFilesSources[postInfo.media.indexOf(item)]} key={index} />
                                 </div>
                             )
                         }
@@ -189,7 +177,7 @@ function Post(props: PostProps) {
                         {
                             postInfo.media.filter(item => AUDIO_EXTENSIONS.includes(item.url.slice(item.url.lastIndexOf(".")))).map((item, index) =>
                                 <div className="file-wrapper" key={index}>
-                                    <audio controls className="attached-audio" src={typeof item.fileData === "string" ? (item.fileData === item.url ? item.fileData : URL.createObjectURL(base64ToFile(item.fileData))) : URL.createObjectURL(item.fileData)} key={index} />
+                                    <audio controls className="attached-audio" src={attachedFilesSources[postInfo.media.indexOf(item)]} key={index} />
                                 </div>
                             )
                         }
@@ -227,10 +215,10 @@ function Post(props: PostProps) {
                     <button className="transparent-button" onClick={() => setAreCommentsOpen(!areCommentsOpen)}><ChatBubbleIcon color="#e08326" /><VisuallyHidden.Root>Оставить комментарий</VisuallyHidden.Root></button>
                     <button className="transparent-button" onClick={() => {
                         navigator.clipboard
-                        .writeText(`http://localhost:8080/posts/${props.id}`)
-                        .then(_ => {
-                            setToasts(toasts.concat({headerContent: "Уведомление", bodyContent: "Ссылка на пост скопирована в буфер обмена"}));
-                        }, _=> setToasts(toasts.concat({headerContent: "Упс...", bodyContent: "Не удалось скопировать ссылку на пост"})));
+                            .writeText(`http://localhost:8080/posts/${props.id}`)
+                            .then(_ => {
+                                setToasts(toasts.concat({ headerContent: "Уведомление", bodyContent: "Ссылка на пост скопирована в буфер обмена" }));
+                            }, _ => setToasts(toasts.concat({ headerContent: "Упс...", bodyContent: "Не удалось скопировать ссылку на пост" })));
                     }}><Share2Icon color="#e08326" /><VisuallyHidden.Root>Поделиться</VisuallyHidden.Root></button>
                 </div>
                 <div className="comments-panel" hidden={!areCommentsOpen}>

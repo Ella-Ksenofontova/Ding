@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Table from "react-bootstrap/Table"
 import { Form } from "react-bootstrap"
 import { Plus } from "react-bootstrap-icons"
@@ -59,9 +59,9 @@ function MessagesView() {
         }
     }
 
-    if (isLoading) {
+   useEffect(() => {
         getMessages();
-    }
+    }, []);
 
     return (
         <>

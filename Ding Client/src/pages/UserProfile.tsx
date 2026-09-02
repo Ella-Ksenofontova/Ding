@@ -1,80 +1,81 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { type User, type Post as PostType, type Toast as ToastType, type Chat } from "../types";
 import InfoAboutUser from "../InfoAboutUser";
 import Post from "../Post";
 import Header from "../Header";
 import ToastsContainer from "../ToastsContainer";
 import MyProfile from "./MyProfile";
-import { getCookie } from "../auxFunctions";
+import { getCookie, getFileFromBase64Safely } from "../auxFunctions";
 import { TOAST_DURATION } from "../aux_constants";
 import "./UserProfile.css";
 import Menu from "../Menu";
 import { useParams } from "react-router";
 import { Button } from "@radix-ui/themes";
 import { ChatBubbleIcon } from "@radix-ui/react-icons";
+import noProfileImage from "../assets/noprofilephoto.png";
 
 function UserProfile() {
     const [infoAboutUser, setInfoAboutUser] = useState<User | null>(null);
     const [infoAboutMe, setInfoAboutMe] = useState<User | null>(null);
     const [arePostsLoading, setArePostsLoading] = useState(true);
-    const [isInfoAboutMeLoading, setIsInfoAboutMeLoading] = useState(true);
-    const [isInfoAboutUserLoading, setIsInfoAboutUserLoading] = useState(true);
     const [userPosts, setUserPosts] = useState<PostType[]>([]);
     const [toasts, setToasts] = useState<ToastType[]>([]);
 
     const { id: userId } = useParams();
 
-    if (isInfoAboutUserLoading && userId) {
-        const userResponse = fetch(`/api/users/${userId}`);
-        userResponse.then(res => {
-            if (res.ok) {
-                return res.json()
-            } else {
-                setToasts(toasts.concat({ headerContent: "Ошибка", bodyContent: "Не удалось получить информацию о пользователе" }));
-                setTimeout(() => setToasts(toasts.filter((_, index) => index != toasts.length - 1)), TOAST_DURATION);
-            }
-        }).then(json => {
-            if (json) {
-                setInfoAboutUser(json);
-            }
-        }).finally(() => setIsInfoAboutUserLoading(false));
-    }
+    useEffect(() => {
+        if (userId) {
+            const userResponse = fetch(`/api/users/${userId}`);
+            userResponse.then(res => {
+                if (res.ok) {
+                    return res.json()
+                } else {
+                    setToasts(toasts.concat({ headerContent: "Ошибка", bodyContent: "Не удалось получить информацию о пользователе" }));
+                    setTimeout(() => setToasts(toasts.filter((_, index) => index != toasts.length - 1)), TOAST_DURATION);
+                }
+            }).then(json => {
+                if (json) {
+                    setInfoAboutUser(json);
+                }
+            });
+        }
 
-    if (arePostsLoading && userId) {
-        const postsResponse = fetch(`/api/user-posts/${userId}`);
-        postsResponse.then(res => {
-            if (res.ok) {
-                return res.json()
-            } else {
-                setToasts(toasts.concat({ headerContent: "Ошибка", bodyContent: "Не удалось получить посты с сервера" }));
-                setTimeout(() => setToasts(toasts.filter((_, index) => index != toasts.length - 1)), TOAST_DURATION);
-            }
-        }).then(json => {
-            setArePostsLoading(false);
-            if (json) {
-                setUserPosts(json);
-            };
-        })
-    }
+        if (arePostsLoading && userId) {
+            const postsResponse = fetch(`/api/user-posts/${userId}`);
+            postsResponse.then(res => {
+                if (res.ok) {
+                    return res.json()
+                } else {
+                    setToasts(toasts.concat({ headerContent: "Ошибка", bodyContent: "Не удалось получить посты с сервера" }));
+                    setTimeout(() => setToasts(toasts.filter((_, index) => index != toasts.length - 1)), TOAST_DURATION);
+                }
+            }).then(json => {
+                setArePostsLoading(false);
+                if (json) {
+                    setUserPosts(json);
+                };
+            });
 
-    if (isInfoAboutMeLoading && getCookie("jwt-token")) {
-        const response = fetch("/api/info-about-me", {
-            headers: {
-                "Authorization": `Bearer ${getCookie("jwt-token")}`
+            if (getCookie("jwt-token")) {
+                const response = fetch("/api/info-about-me", {
+                    headers: {
+                        "Authorization": `Bearer ${getCookie("jwt-token")}`
+                    }
+                });
+                response.then(res => {
+                    if (res.ok) {
+                        return res.json()
+                    } else {
+                        throw new Error("Не удалось получить информацию о текущем пользователе");
+                    }
+                }).then(json => {
+                    if (json) {
+                        setInfoAboutMe(json);
+                    }
+                });
             }
-        });
-        response.then(res => {
-            if (res.ok) {
-                return res.json()
-            } else {
-                throw new Error("Не удалось получить информацию о текущем пользователе");
-            }
-        }).then(json => {
-            if (json) {
-                setInfoAboutMe(json);
-            }
-        }).finally(() => setIsInfoAboutMeLoading(false));
-    }
+        }
+    }, [userId]);
 
     function handleChangeFriendshipStatus() {
         let updatedFriends = infoAboutUser?.friends.map(item => item.id);
@@ -104,9 +105,6 @@ function UserProfile() {
         response.then(res => {
             if (!res.ok) {
                 setToasts(toasts.concat({ headerContent: "Упс...", bodyContent: "Произошла ошибка" }));
-            } else {
-                setIsInfoAboutMeLoading(true);
-                setIsInfoAboutUserLoading(true);
             }
         })
     }
@@ -163,18 +161,57 @@ function UserProfile() {
                             <ChatBubbleIcon /> Написать
                         </Button>
                     </div>
-                    <div className="posts-wrapper">
-                        {
-                            userPosts.length === 0 ? arePostsLoading ? <p>Загрузка...</p> : <p>Постов пока нет</p> :
-                                userPosts.map(item =>
-                                    <Post
-                                        {...item}
-                                        currentUser={{ username: infoAboutMe?.username || "", id: infoAboutMe?.id || -1 }}
-                                    />
-                                )
-                        }
+                    <div className="posts-and-relationships">
+                        <div className="posts-wrapper">
+                            {
+                                userPosts.length === 0 ? arePostsLoading ? <p>Загрузка...</p> : <p>Постов пока нет</p> :
+                                    userPosts.map(item =>
+                                        <Post
+                                            {...item}
+                                            currentUser={{ username: infoAboutMe?.username || "", id: infoAboutMe?.id || -1 }}
+                                        />
+                                    )
+                            }
+                        </div>
+                        <div className="relationship-wrapper">
+                            <h2 className="heading">Друзья</h2>
+                            {
+                                infoAboutUser?.friends.length === 0 ? <p className="no-relationships">У пользователя пока нет друзей</p> :
+                                    <ul className="relationship-list">
+                                        {infoAboutUser?.friends.slice(0, 5).map(friend => (
+                                            <li key={friend.id} className="relationship-item">
+                                                <img src={getFileFromBase64Safely(friend.avatar || noProfileImage)} alt={`Аватар пользователя ${friend.username}`} className="user-avatar" />
+                                                <a href={`/users/${friend.id}`}>{friend.username}</a>
+                                            </li>
+                                        ))}
+                                    </ul>
+                            }
+                            <h2 className="heading">Подписчики</h2>
+                            {
+                                infoAboutUser?.followers.length === 0 ? <p className="no-relationships">У пользователя пока нет подписчиков</p> :
+                                    <ul className="relationship-list">
+                                        {infoAboutUser?.followers.slice(0, 5).map(follower => (
+                                            <li key={follower.id} className="relationship-item">
+                                                <img src={getFileFromBase64Safely(follower.avatar || noProfileImage)} alt={`Аватар пользователя ${follower.username}`} className="user-avatar" />
+                                                <a href={`/users/${follower.id}`}>{follower.username}</a>
+                                            </li>
+                                        ))}
+                                    </ul>
+                            }
+                            <h2 className="heading">Группы</h2>
+                            {
+                                infoAboutUser?.groups.length === 0 ? <p className="no-relationships">Пользователь пока не состоит ни в одной группе</p> :
+                                    <ul className="relationship-list">
+                                        {infoAboutUser?.groups.slice(0, 5).map(group => (
+                                            <li key={group.id} className="relationship-item">
+                                                <img src={getFileFromBase64Safely(group.avatar || noProfileImage)} alt={`Аватар группы ${group.name}`} className="group-avatar" />
+                                                <a href={`/groups/${group.id}`}>{group.name}</a>
+                                            </li>
+                                        ))}
+                                    </ul>
+                            }
+                        </div>
                     </div>
-
                     <ToastsContainer toasts={toasts} />
                 </main>
             </div>

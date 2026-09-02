@@ -10,12 +10,14 @@ groups_router = APIRouter(tags=["groups"])
 
 @groups_router.get("/groups", response_model=List[api_models.GroupRead])
 def get_groups(session: Session = Depends(get_session)) -> list[db_models.Group]:
+    "Finds all groups stores in the database."
     groups = list(session.exec(select(db_models.Group)).all())
 
     return groups
 
 @groups_router.get("/groups/{id:int}", response_model=api_models.GroupRead)
 def get_group_by_id(id: int, session: Session = Depends(get_session)) -> db_models.Group:
+    "Tries to find group with given id and return it if found, otherwise raises HTTPException with 404 status code."
     group = session.exec(select(db_models.Group).where(db_models.Group.id == id).options(selectinload(getattr(db_models.Group, "members")))).first()
     if not group:
         raise HTTPException(404, "Группы с таким ID не существует")
@@ -23,6 +25,7 @@ def get_group_by_id(id: int, session: Session = Depends(get_session)) -> db_mode
 
 @groups_router.get("/search-groups/{name_or_id}")
 def get_groups_by_query(name_or_id: str, session: Session = Depends(get_session)) -> list[db_models.Group]:
+    "Finds groups that have name or id starting with query string."
     groups = list(session.exec(select(db_models.Group).where(db_models.Group.name.startswith(name_or_id))).all())
     if name_or_id.isdigit():
         groups_with_id = list(session.exec(select(db_models.Group).where(str(db_models.Group.id).startswith(name_or_id))).all())
@@ -31,11 +34,13 @@ def get_groups_by_query(name_or_id: str, session: Session = Depends(get_session)
 
 @groups_router.get("/user-groups/{user_id}")
 def get_user_groups(user_id: int, session: Session = Depends(get_session)):
+    "Finds groups of user with given id."
     groups = list(session.exec(select(db_models.Group).where(UserGroupLink.userID == user_id, UserGroupLink.groupID == db_models.Group.id).options(selectinload(getattr(db_models.Group, "members")))).all())
     return groups
 
 @groups_router.post("/groups")
 def add_group(group_data: api_models.GroupPost, session: Session = Depends(get_session)):
+    "Adds group to the database."
     if group_data.id:
         db_group = session.get(db_models.Group, group_data.id)
         if db_group:
@@ -61,9 +66,10 @@ def add_group(group_data: api_models.GroupPost, session: Session = Depends(get_s
 
 @groups_router.delete("/groups/{id}")
 def delete_group(id: int, session: Session = Depends(get_session)):
+    "Deletes group from the database."
     group = session.exec(select(db_models.Group).where(db_models.Group.id == id)).first()
     if not group:
-        raise HTTPException(404, "Такого сообщения не существует")
+        raise HTTPException(404, "Такой группы не существует")
     session.delete(group)
 
     session.commit()

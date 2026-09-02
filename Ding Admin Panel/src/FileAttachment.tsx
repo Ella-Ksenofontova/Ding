@@ -7,7 +7,7 @@ import { type LoadingStatus } from "./types";
 import "./FileAttachment.css"
 import FilePreview from "./FilePreview";
 import { IMAGE_EXTENSIONS, VIDEO_EXTENSIONS, AUDIO_EXTENSIONS } from "./auxConstants";
-import { base64ToFile } from "./auxFunctions";
+import { base64ToFile, getSrcFromBase64Safely } from "./auxFunctions";
 
 type FileAttachmentProps = {
     newFileSrc: string,
@@ -27,16 +27,12 @@ function checkIfExtensionIsApproved(src: string) {
 
 function FileAttachment({ newFileSrc, setNewFileSrc, loadingStatus, setLoadingStatus, isAddingFile, setIsAddingFile, attachedFiles, setAttachedFiles }: FileAttachmentProps) {
     const [fileObj, setFileObj] = useState<null | File>(null);
+    const [attachedFilesSources, setAttachedFilesSources] = useState<string[]>([]);
 
-    const files = document.querySelectorAll(".attached-files img, .attached-files video, .attached-files audio") as NodeListOf<HTMLImageElement | HTMLVideoElement | HTMLAudioElement>;
-    for (let file of files) {
-        const src = file.src;
-        try {
-            URL.revokeObjectURL(src);
-        } catch {
-            // Here we don't have to do anythiing:)
-        }
+    if (attachedFiles.length !== Object.keys(attachedFilesSources).length) {
+        setAttachedFilesSources(attachedFiles.map(item => typeof item.fileData === "string" ? getSrcFromBase64Safely(item.fileData) : URL.createObjectURL(item.fileData)));
     }
+
     return (
         <>
             <h3 className="heading heading-level-3">Прикреплённые файлы</h3>
@@ -100,7 +96,7 @@ function FileAttachment({ newFileSrc, setNewFileSrc, loadingStatus, setLoadingSt
                     {
                         attachedFiles.filter(item => IMAGE_EXTENSIONS.includes(item.url.slice(item.url.lastIndexOf(".")))).map((item, index) =>
                             <div className="file-wrapper">
-                                <img className="attached-img" src={typeof item.fileData === "string" ? (item.fileData === item.url ? item.fileData : URL.createObjectURL(base64ToFile(item.fileData))) : URL.createObjectURL(item.fileData)} key={index} alt={`Изображение ${index + 1}`} />
+                                <img className="attached-img" src={attachedFilesSources[attachedFiles.indexOf(item)]} key={index} alt={`Изображение ${index + 1}`} />
                                 <Button variant="danger" onClick={() => setAttachedFiles(attachedFiles.filter(i => i !== item))}>Удалить</Button>
                             </div>
                         )
@@ -110,7 +106,7 @@ function FileAttachment({ newFileSrc, setNewFileSrc, loadingStatus, setLoadingSt
                     {
                         attachedFiles.filter(item => VIDEO_EXTENSIONS.includes(item.url.slice(item.url.lastIndexOf(".")))).map((item, index) =>
                             <div className="file-wrapper">
-                                <video controls className="attached-video" src={typeof item.fileData === "string" ? (item.fileData === item.url ? item.fileData : URL.createObjectURL(base64ToFile(item.fileData))) : URL.createObjectURL(item.fileData)} key={index} />
+                                <video controls className="attached-video" src={attachedFilesSources[attachedFiles.indexOf(item)]} key={index} />
                                 <Button variant="danger" onClick={() => setAttachedFiles(attachedFiles.filter(i => i !== item))}>Удалить</Button>
                             </div>
                         )
@@ -120,7 +116,7 @@ function FileAttachment({ newFileSrc, setNewFileSrc, loadingStatus, setLoadingSt
                     {
                         attachedFiles.filter(item => AUDIO_EXTENSIONS.includes(item.url.slice(item.url.lastIndexOf(".")))).map((item, index) =>
                             <div className="file-wrapper">
-                                <audio controls className="attached-audio" src={typeof item.fileData === "string" ? (item.fileData === item.url ? item.fileData : URL.createObjectURL(base64ToFile(item.fileData))) : URL.createObjectURL(item.fileData)} key={index} />
+                                <audio controls className="attached-audio" src={attachedFilesSources[attachedFiles.indexOf(item)]} key={index} />
                                 <Button variant="danger" onClick={() => setAttachedFiles(attachedFiles.filter(i => i !== item))}>Удалить</Button>
                             </div>
                         )

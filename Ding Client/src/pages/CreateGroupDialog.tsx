@@ -88,7 +88,7 @@ function CreateGroupDialog({ isOpen, setIsOpen }: CreateGroupProps) {
                             setTopic(event.target.value);
                         }} />
                     </div>
-                    <div className="participants-title"><h3 className="heading">Участники группы</h3> <Button onClick={() => setIsParticipantsSearchOpen(true)} disabled={!infoAboutMe}><PlusIcon />Добавить участника</Button></div>
+                    <div className="participants-title"><h3 className="heading participants-heading">Участники группы</h3> <Button onClick={() => setIsParticipantsSearchOpen(true)} disabled={!infoAboutMe}><PlusIcon />Добавить участника</Button></div>
                     <div className={`add-participants ${isParticipantsSearchOpen && Boolean(infoAboutMe) ? "" : "collapsed"}`}>
                         <label htmlFor="search-user">Имя или ID</label>
                         <TextField.Root id="search-user" value={searchInputValue} onChange={event => {

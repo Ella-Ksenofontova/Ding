@@ -5,15 +5,19 @@ from datetime import datetime
 from sqlmodel import Field
 
 class UserAPI(BaseModel):
+    "This class represents a user in the API responses."
     id: int
     username: str
     avatar: Optional[str] = ""
 
 class GroupAPI(BaseModel):
+    "This class represents a group in the API responses."
     id: int
     name: str
+    avatar: Optional[str] = ""
 
 class GroupPost(BaseModel):
+    "This class represents a group in the API POST requests from client."
     id: Optional[int] = None
     name: str
     topic: Optional[str] = None
@@ -22,6 +26,7 @@ class GroupPost(BaseModel):
     admins: List[UserAPI] = []
 
 class GroupRead(BaseModel):
+    "This class represents a group in the API GET responses."
     id: int
     name: str
     topic: Optional[str] = None
@@ -30,6 +35,7 @@ class GroupRead(BaseModel):
     admins: List[UserAPI] = []
 
 class UserPost(BaseModel):
+    "This class represents a user in the API POST requests from client."
     id: Optional[int] = None
     username: str
     isOnline: bool = False
@@ -57,6 +63,7 @@ class UserPost(BaseModel):
         return v
 
 class UserGet(BaseModel):
+    "This class represents a user in the API GET responses."
     id: Optional[int] = None
     username: str
     isOnline: bool = False
@@ -77,6 +84,7 @@ class UserGet(BaseModel):
     phone: Optional[PhoneNumber]
 
 class PostPost(BaseModel):
+    "This class represents a post in the API POST requests from client."
     id: Optional[int] = None
     date: datetime
     media: List[Any]
@@ -86,6 +94,7 @@ class PostPost(BaseModel):
     userOrGroupId: int
 
 class PostRead(PostPost):
+    "This class represents a post in the API GET responses."
     id: Optional[int] = None
     date: datetime
     media: List[Any]
@@ -95,6 +104,7 @@ class PostRead(PostPost):
     userOrGroupId: int
 
 class ChatPost(BaseModel):
+    "This class represents a chat in the API POST requests from client."
     id: Optional[int] = None
     name: str
     participants: List[UserAPI] = []
@@ -103,6 +113,7 @@ class ChatPost(BaseModel):
     admins: List[UserAPI] = []
 
 class ChatRead(BaseModel):
+    "This class represents a chat in the API GET responses."
     id: int
     name: str
     participants: List[UserAPI] = []
@@ -111,6 +122,7 @@ class ChatRead(BaseModel):
     admins: List[UserAPI] = []
 
 class CommentGet(BaseModel):
+    "This class represents a comment in the API GET responses."
     id: int
     date: datetime
     user: UserAPI

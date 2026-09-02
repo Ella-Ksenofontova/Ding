@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { base64ToFile, getCookie, getFileFromBase64Safely } from "../auxFunctions";
 import type { Group, Toast, Post as PostType, HasUsernameAndId } from "../types";
@@ -21,7 +21,7 @@ function GroupPage() {
     const [error, setError] = useState("");
     const [isMemberDialogOpen, setIsMemberDialogOpen] = useState(false);
 
-    if (isLoading.myId) {
+    useEffect(() => {
         const userResponse = fetch("/api/info-about-me", {
             headers: {
                 "Authorization": `Bearer ${getCookie("jwt-token")}`
@@ -38,11 +38,9 @@ function GroupPage() {
                 setInfoAboutMe(json);
             }
         }).finally(() => setIsLoading({ ...isLoading, myId: false }));
-    }
 
-    if (isLoading.infoAboutGroup) {
-        const response = fetch(`/api/groups/${groupId}`);
-        response.then(res => {
+        const groupResponse = fetch(`/api/groups/${groupId}`);
+        groupResponse.then(res => {
             if (res.ok) {
                 return res.json();
             } else {
@@ -57,11 +55,9 @@ function GroupPage() {
                 setGroupInfo(json);
             }
         }).finally(() => setIsLoading({ ...isLoading, infoAboutGroup: false }));
-    }
 
-    if (isLoading.groupPosts) {
-        const response = fetch(`/api/group-posts/${groupId}`);
-        response.then(res => {
+        const postsResponse = fetch(`/api/group-posts/${groupId}`);
+        postsResponse.then(res => {
             if (res.ok) {
                 return res.json();
             } else {
@@ -70,14 +66,15 @@ function GroupPage() {
         }).then((data: PostType[]) => {
             if (data) setGroupPosts(data);
         }).finally(() => setIsLoading({ ...isLoading, groupPosts: false }));
-    }
+    }, []);
+
 
     if (groupInfo?.avatar && !groupAvatar) {
         try {
-            const avatarAsFile = base64ToFile(groupInfo.avatar);
+            const avatarAsFile = base64ToFile(groupInfo.avatar as string);
             setGroupAvatar(avatarAsFile);
         } catch {
-            setGroupAvatar(groupInfo.avatar);
+            setGroupAvatar(groupInfo.avatar as string);
         }
     }
 

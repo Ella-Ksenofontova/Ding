@@ -17,6 +17,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 auth_router = APIRouter(tags=["auth", "users"])
 
 def create_access_token(data: dict, expires_delta: timedelta | None = None):
+    "Creates a JWT access token with the given data and expiration time."
     data_to_encode = data.copy()
     if expires_delta:
         expire = datetime.now(timezone.utc) + expires_delta
@@ -28,6 +29,7 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     return encoded_jwt
 
 def verify_access_token(token: str):
+    "Verifies the given JWT access token and returns the decoded payload if valid."
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         return payload
@@ -39,12 +41,14 @@ def verify_access_token(token: str):
         headers={"WWW-Authenticate": "Bearer"})
 
 class FormData(OAuth2PasswordRequestForm):
+    "This class represents the form data for user login, including username, password (according to OAuth2 specification), and remember_me option."
     def __init__(self, username: Annotated[str, Form()], password: Annotated[str, Form(json_schema_extra={"format": "password"})],          remember_me: Annotated[Literal["yes"] | Literal["no"], Form()]):
         super().__init__(username=username, password=password)
         self.remember_me = remember_me
 
 @auth_router.post("/login")
 async def login(data:  Annotated[FormData, Depends()], session: Session = Depends(get_session)):
+    "This endpoint handles user login. It verifies the provided username and password, and if valid, returns a JWT access token with an expiration time based on the remember_me option. Otherwise it raises an HTTPException with a 400 status code and an error message."
     if data.username is None:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Введите email или пароль")
 

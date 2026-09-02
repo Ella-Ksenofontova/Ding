@@ -7,6 +7,7 @@ games_router = APIRouter(tags=["games"])
 
 @games_router.get("/games")
 async def get_games(session: Session = Depends(get_session)):
+    "Finds all games stored in the database and returns them."
     statement = select(db_models.Game)
     results = session.exec(statement)
     games = results.all()
@@ -14,6 +15,7 @@ async def get_games(session: Session = Depends(get_session)):
 
 @games_router.get("/games/{game_id}")
 async def get_game(game_id: int, session: Session = Depends(get_session)):
+    "Tries to find the game with given id and returns it if found, otherwise raises HTTPException with 404 status code."
     statement = select(db_models.Game).where(db_models.Game.id == game_id)
     result = session.exec(statement).first()
     if result is None:
@@ -22,6 +24,7 @@ async def get_game(game_id: int, session: Session = Depends(get_session)):
 
 @games_router.get("/search-games/{name_or_id}")
 async def search_games_by_name_or_id(name_or_id: str, session: Session = Depends(get_session)):
+    "Finds games that have name or id starting with query string."
     games = list(session.exec(select(db_models.Game).where(db_models.Game.name.startswith(name_or_id))).all())
     if name_or_id.isdigit():
         games_with_id = list(session.exec(select(db_models.Game).where(cast(db_models.Game.id, String).like(f"{name_or_id}%"))).all())
@@ -30,11 +33,13 @@ async def search_games_by_name_or_id(name_or_id: str, session: Session = Depends
 
 @games_router.post("/games")
 async def create_game(game: db_models.Game, session: Session = Depends(get_session)):
+    "Adds game to the database."
     session.merge(game)
     session.commit()
 
 @games_router.delete("/games/{game_id}")
 async def delete_game(game_id: int, session: Session = Depends(get_session)):
+    "Deletes game from the database."
     statement = select(db_models.Game).where(db_models.Game.id == game_id)
     result = session.exec(statement).first()
     if result is None:

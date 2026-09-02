@@ -10,17 +10,7 @@ import ToastsContainer from "../ToastsContainer";
 import "./Chats.css"
 import CreateChatDialog from "./CreateChatDialog";
 
-function Chats() {
-    const files = document.querySelectorAll(".chat-avatar") as NodeListOf<HTMLImageElement | HTMLVideoElement | HTMLAudioElement>;
-    for (let file of files) {
-        const src = file.src;
-        try {
-            URL.revokeObjectURL(src);
-        } catch {
-            // Here we don't have to do anythiing:)
-        }
-    }
-    
+function Chats() {   
     const [myChats, setMyChats] = useState<ChatType[]>([]);
     const [myId, setMyId] = useState<number | null>(null);
     const [isLoading, setIsLoading] = useState({ myId: true, myChats: true });

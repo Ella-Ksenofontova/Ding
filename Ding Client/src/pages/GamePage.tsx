@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router";
 import type { Game, Toast } from "../types";
 import Header from "../Header";
@@ -15,7 +15,7 @@ function GamePage() {
 
     const scriptRef = useRef<HTMLScriptElement | null>(null);
 
-    if (isLoading.infoAboutGame) {
+    useEffect(() => {
         const response = fetch(`/api/games/${gameId}`);
         response.then(res => {
             if (res.ok) return res.json();
@@ -27,7 +27,7 @@ function GamePage() {
         }).then(data => {
             if (data) setGameInfo(data);
         }).finally(() => setIsLoading({ ...isLoading, infoAboutGame: false }));
-    }
+    }, []);
 
     if (isLoading.rufflePlayer && scriptRef.current) {
         scriptRef.current.addEventListener("load", () => setIsLoading({ ...isLoading, rufflePlayer: false }));

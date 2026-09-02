@@ -9,13 +9,13 @@ type ToastsProps = {
 function ToastsContainer({ toasts }: ToastsProps) {
     return (
         <Toast.Provider swipeDirection="right">
-            {toasts.map(item =>
-                <Toast.Root className="ToastRoot">
+            {toasts.map((item, index) =>
+                <Toast.Root className="ToastRoot" key={index}>
                     <Toast.Title className="ToastTitle">{item.headerContent}</Toast.Title>
                     <Toast.Description className="ToastDescription">{item.bodyContent}</Toast.Description>
                 </Toast.Root>
             )}
-            <Toast.Viewport className="ToastViewport" />
+            <Toast.Viewport className="ToastViewport" label="Уведомления (F8)" />
         </Toast.Provider>
     )
 }

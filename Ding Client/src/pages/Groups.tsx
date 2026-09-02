@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { type Group as GroupType, type Toast } from "../types";
 import { getCookie } from "../auxFunctions";
 import Group from "./Group";
@@ -11,23 +11,13 @@ import "./Groups.css"
 import CreateGroupDialog from "./CreateGroupDialog";
 
 function Groups() {
-    const files = document.querySelectorAll(".group-avatar") as NodeListOf<HTMLImageElement | HTMLVideoElement | HTMLAudioElement>;
-    for (let file of files) {
-        const src = file.src;
-        try {
-            URL.revokeObjectURL(src);
-        } catch {
-            // Here we don't have to do anythiing:)
-        }
-    }
-
     const [myGroups, setMyGroups] = useState<GroupType[]>([]);
     const [myId, setMyId] = useState<number | null>(null);
     const [isLoading, setIsLoading] = useState({ myId: true, myGroups: true });
     const [toasts, setToasts] = useState<Toast[]>([]);
     const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
 
-    if (isLoading.myId) {
+    useEffect(() => {
         const userResponse = fetch("/api/info-about-me", {
             headers: {
                 "Authorization": `Bearer ${getCookie("jwt-token")}`
@@ -46,22 +36,24 @@ function Groups() {
 
             }
         }).finally(() => setIsLoading({ ...isLoading, myId: false }));
-    }
+    }, []);
 
-    if (myId && isLoading.myGroups) {
-        const response = fetch(`/api/user-groups/${myId}`);
-        response.then(res => {
-            if (res.ok) {
-                return res.json();
-            } else {
-                setToasts(toasts.concat({ headerContent: "Ошибка", bodyContent: "Не удалось получить информацию о группах" }));
-            }
-        }).then(json => {
-            if (json) {
-                setMyGroups(json);
-            }
-        }).finally(() => setIsLoading({ ...isLoading, myGroups: false }));
-    }
+    useEffect(() => {
+        if (myId) {
+            const response = fetch(`/api/user-groups/${myId}`);
+            response.then(res => {
+                if (res.ok) {
+                    return res.json();
+                } else {
+                    setToasts(toasts.concat({ headerContent: "Ошибка", bodyContent: "Не удалось получить информацию о группах" }));
+                }
+            }).then(json => {
+                if (json) {
+                    setMyGroups(json);
+                }
+            }).finally(() => setIsLoading({ ...isLoading, myGroups: false }));
+        }
+    }, [myId]);
 
     return (
         <>
@@ -83,7 +75,7 @@ function Groups() {
                         }
                     </div>
                     <ToastsContainer toasts={toasts} />
-                    <CreateGroupDialog isOpen={isCreateDialogOpen} setIsOpen={setIsCreateDialogOpen}/>
+                    <CreateGroupDialog isOpen={isCreateDialogOpen} setIsOpen={setIsCreateDialogOpen} />
                 </main>
             </div>
         </>

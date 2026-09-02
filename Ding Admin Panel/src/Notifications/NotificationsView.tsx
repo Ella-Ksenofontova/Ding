@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, Table, Form } from "react-bootstrap";
 import { Plus } from "react-bootstrap-icons";
 import Header from "../Header";
@@ -6,7 +6,7 @@ import { type Notification, type Toast as ToastType } from "../types";
 import CustomToastsContainer from "../CustomToastsContainer";
 
 function NotificationsView() {
-     document.title = `Просмотр уведомлений`
+    document.title = `Просмотр уведомлений`
     const [isLoading, setIsLoading] = useState(true);
     const [notifications, setNotifications] = useState<Notification[]>([]);
     const [error, setError] = useState("");
@@ -56,9 +56,9 @@ function NotificationsView() {
         }
     }
 
-    if (isLoading) {
+    useEffect(() => {
         getNotifications();
-    }
+    }, []);
 
     return (
         <>

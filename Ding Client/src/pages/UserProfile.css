@@ -6,3 +6,42 @@
     display: flex;
     gap: 10px;
 }
+
+.posts-and-relationships {
+    display: flex;
+    justify-content: space-between;
+}
+
+.relationships-wrapper {
+    margin-top: 20px;
+    margin-left: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.relationship-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+    border: 1px solid #f1debe;
+    border-radius: 7px;
+    padding: 10px;
+}
+
+.relationship-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.no-relationships {
+    color: #888;
+    margin-top: 10px;
+}
+
+@media (max-width: 768px) {
+    .posts-and-relationships {
+        flex-direction: column-reverse;
+    }
+}

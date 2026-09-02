@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { User } from "./types"
 import { Avatar, Button } from "@radix-ui/themes";
 import { Pencil1Icon } from "@radix-ui/react-icons";
@@ -16,7 +16,11 @@ let avatar = "";
 
 function InfoAboutUser({ infoAboutUser, isLoading, isMyProfile }: InfoProps) {
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-    if (!avatar && infoAboutUser?.avatar) avatar = getFileFromBase64Safely(infoAboutUser?.avatar || "no-such-image");
+    useEffect(() => {
+        if (!avatar && infoAboutUser?.avatar) {
+            avatar = getFileFromBase64Safely(infoAboutUser?.avatar as string || "");
+        }
+    }, [infoAboutUser]);
 
     return (
         infoAboutUser ? <>

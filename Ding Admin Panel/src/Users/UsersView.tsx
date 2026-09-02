@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, Table, Form } from "react-bootstrap";
 import { Plus } from "react-bootstrap-icons";
 import Header from "../Header";
@@ -56,9 +56,11 @@ function UsersView() {
         }
     }
 
-    if (isLoading) {
-        getUsers();
-    }
+    useEffect(() => {
+        if (isLoading) {
+            getUsers();
+        }
+    }, [isLoading]);
 
     return (
         <>

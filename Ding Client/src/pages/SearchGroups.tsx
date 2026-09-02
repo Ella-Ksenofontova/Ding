@@ -65,7 +65,7 @@ function SearchGroups() {
                         {
                             searchResults.map(res =>
                                 <li className="search-result" key={res.id}>
-                                    <Avatar src={getFileFromBase64Safely(res.avatar || "")} fallback={res.name[0]} className="group-avatar" />
+                                    <Avatar src={getFileFromBase64Safely(res.avatar as string || "")} fallback={res.name[0]} className="group-avatar" />
                                     <h3 className="username heading"><a href={`/groups/${res.id}`} className="user-link">{res.name}</a></h3>
                                 </li>
                             )

@@ -1,10 +1,10 @@
 import { Button, IconButton, Popover } from "@radix-ui/themes";
 import { PlusIcon, InfoCircledIcon } from "@radix-ui/react-icons";
-import { useRef, useState, type SetStateAction } from "react";
+import { useState, type SetStateAction } from "react";
 import TextareaWithFormattingButtons from "./TextareaWithFormattingButtons";
 import { type Toast as ToastType, type Post } from "./types";
 import "./CreateEditPost.css"
-import { fileToBase64, base64ToFile } from "./auxFunctions";
+import { fileToBase64, base64ToFile, getFileFromBase64Safely } from "./auxFunctions";
 import { AUDIO_EXTENSIONS, IMAGE_EXTENSIONS, VIDEO_EXTENSIONS } from "./aux_constants";
 
 
@@ -29,18 +29,10 @@ type EditPostProps = {
 function EditPost({ currentUserId, postId, postFiles, postText, onPostsUpdate, onClose, toasts, setToasts, userPageId }: EditPostProps) {
     const [text, setText] = useState(postText);
     const [attachedFiles, setAttachedFiles] = useState<{ url: string, fileData: string | File }[]>(postFiles);
-    const editPostWrapper = useRef<HTMLDivElement | null>(null);
+    const [filesSources, setFilesSources] = useState<string[]>([]);
 
-    if (editPostWrapper.current) {
-        const files = document.querySelectorAll(".attached-img, .attached-video, .attached-audio") as NodeListOf<HTMLImageElement | HTMLVideoElement | HTMLAudioElement>;
-        for (let file of files) {
-            const src = file.src;
-            try {
-                URL.revokeObjectURL(src);
-            } catch {
-                // Here we don't have to do anythiing:)
-            }
-        }
+    if (filesSources.length !== attachedFiles.length) {
+        setFilesSources(attachedFiles.map(file => typeof file.fileData === "string" ? getFileFromBase64Safely(file.fileData) : URL.createObjectURL(file.fileData)));
     }
 
 
@@ -114,7 +106,7 @@ function EditPost({ currentUserId, postId, postFiles, postText, onPostsUpdate, o
     }
 
     return (
-        <div className="edit-post-wrapper" ref={editPostWrapper}>
+        <div className="edit-post-wrapper">
             <TextareaWithFormattingButtons id="text" text={text} setText={setText} />
             <input type="file" hidden id="file-selector" accept="audio/*,image/*,video/*" onChange={(event) => {
                 const selectedFiles = event.target.files;
@@ -159,7 +151,7 @@ function EditPost({ currentUserId, postId, postFiles, postText, onPostsUpdate, o
                     {
                         attachedFiles.filter(item => IMAGE_EXTENSIONS.includes(item.url.slice(item.url.lastIndexOf(".")))).map((item, index) =>
                             <div className="file-wrapper">
-                                <img className="attached-img" src={typeof item.fileData === "string" ? item.fileData === item.url ? item.fileData : URL.createObjectURL(base64ToFile(item.fileData)) : URL.createObjectURL(item.fileData)} key={index} alt={`Изображение ${index + 1}`} />
+                                <img className="attached-img" src={filesSources[attachedFiles.indexOf(item)]} key={index} alt={`Изображение ${index + 1}`} />
                                 <Button color="red" onClick={() => setAttachedFiles(attachedFiles.filter(i => i !== item))}>Удалить</Button>
                             </div>
                         )
@@ -169,7 +161,7 @@ function EditPost({ currentUserId, postId, postFiles, postText, onPostsUpdate, o
                     {
                         attachedFiles.filter(item => VIDEO_EXTENSIONS.includes(item.url.slice(item.url.lastIndexOf(".")))).map((item, index) =>
                             <div className="file-wrapper">
-                                <video controls className="attached-video" src={typeof item.fileData === "string" ? item.fileData === item.url ? item.fileData : URL.createObjectURL(base64ToFile(item.fileData)) : URL.createObjectURL(item.fileData)} key={index} />
+                                <video controls className="attached-video" src={filesSources[attachedFiles.indexOf(item)]} key={index} />
                                 <Button color="red" onClick={() => setAttachedFiles(attachedFiles.filter(i => i !== item))}>Удалить</Button>
                             </div>
                         )
@@ -179,7 +171,7 @@ function EditPost({ currentUserId, postId, postFiles, postText, onPostsUpdate, o
                     {
                         attachedFiles.filter(item => AUDIO_EXTENSIONS.includes(item.url.slice(item.url.lastIndexOf(".")))).map((item, index) =>
                             <div className="file-wrapper">
-                                <audio controls className="attached-audio" src={typeof item.fileData === "string" ? item.fileData === item.url ? item.fileData : URL.createObjectURL(base64ToFile(item.fileData)) : URL.createObjectURL(item.fileData)} key={index} />
+                                <audio controls className="attached-audio" src={filesSources[attachedFiles.indexOf(item)]} key={index} />
                                 <Button color="red" onClick={() => setAttachedFiles(attachedFiles.filter(i => i !== item))}>Удалить</Button>
                             </div>
                         )

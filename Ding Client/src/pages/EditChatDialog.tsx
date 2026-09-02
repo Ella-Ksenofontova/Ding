@@ -114,7 +114,7 @@ function EditChatDialog({ isOpen, setIsOpen, chatInfo, myId, onUpdate }: EditDia
                                     ...updatedInfo,
                                     participants: updatedInfo.participants.concat({
                                         ...item,
-                                        avatar: { url: "", fileData: item.avatar || "" }
+                                        avatar: { url: "", fileData: item.avatar as string || "" }
                                     }),
                                     is_name_auto_generated: updatedInfo.participants.length === 1
                                 });

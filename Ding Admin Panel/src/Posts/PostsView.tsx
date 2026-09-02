@@ -1,7 +1,7 @@
 import { Button, Table, Form } from "react-bootstrap";
 import { Plus } from "react-bootstrap-icons";
 import Header from "../Header";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { type Post, type Toast as ToastType } from "../types";
 import CustomToastsContainer from "../CustomToastsContainer";
 
@@ -56,9 +56,9 @@ function PostsView() {
         }
     }
 
-    if (isLoading) {
+    useEffect(() => {
         getPosts();
-    }
+    }, []);
 
     return (
         <>

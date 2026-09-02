@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { type Game, type Toast as ToastType } from "../types";
 import Header from "../Header";
 import { Button, Table, Form } from "react-bootstrap";
@@ -28,7 +28,7 @@ function GamesView() {
             });
     }
 
-    if (isLoading) {
+    useEffect(() => {
         fetch("/api/games")
             .then((response) => {
                 if (response.ok) return response.json();
@@ -37,7 +37,7 @@ function GamesView() {
             .then((data) => {
                 if (data) setGames(data);
             }).finally(() => setIsLoading(false));
-    }
+    }, []);
 
     async function requestDelete(gameId: number) {
         const response = await fetch(`/api/games/${gameId}`, {

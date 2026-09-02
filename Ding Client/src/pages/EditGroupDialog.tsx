@@ -58,7 +58,7 @@ function EditGroupDialog({ isOpen, setIsOpen, groupInfo, myId }: EditGroupProps)
                             }
                         }} />
                         <div className="avatar-edit">
-                            <Avatar src={getSrc(updatedInfo.avatar?.fileData || "") || noProfilePhoto} fallback={updatedInfo.name ? updatedInfo.name[0] : "G"} className="group-avatar">
+                            <Avatar src={getSrc((updatedInfo.avatar as {url: string, fileData: File | string})?.fileData || "") || noProfilePhoto} fallback={updatedInfo.name ? updatedInfo.name[0] : "G"} className="group-avatar">
                             </Avatar>
                             <Button className="edit-avatar-button" onClick={() => document.getElementById("avatar-picker")?.click()}><Pencil1Icon /><VisuallyHidden.Root>Редактировать аватар</VisuallyHidden.Root></Button>
                             <Button variant="ghost" onClick={() => setUpdatedInfo({
@@ -107,7 +107,7 @@ function EditGroupDialog({ isOpen, setIsOpen, groupInfo, myId }: EditGroupProps)
                                 <li className="search-result">{item.username} {updatedInfo.members.map(m => m.id).includes(item.id) ? "" : <Button onClick={() => {
                                     setUpdatedInfo({
                                         ...updatedInfo,
-                                        members: updatedInfo.members.concat(item)
+                                        members: updatedInfo.members.concat(item as User & {avatar: string})
                                     })
                                 }}><PlusIcon /><VisuallyHidden.Root>Добавить пользователя</VisuallyHidden.Root></Button>}</li>
                             )}
@@ -132,10 +132,10 @@ function EditGroupDialog({ isOpen, setIsOpen, groupInfo, myId }: EditGroupProps)
                         <Button onClick={async () => {
                             if (updatedInfo.name && updatedInfo.members.length) {
                                 let avatarToSend = updatedInfo.avatar;
-                                if (avatarToSend && typeof avatarToSend.fileData !== "string") {
-                                    const fileDataToSend = await fileToBase64(avatarToSend.fileData);
+                                if (avatarToSend && typeof (avatarToSend as {url: string, fileData: File}).fileData !== "string") {
+                                    const fileDataToSend = await fileToBase64((avatarToSend as {url: string, fileData: File}).fileData);
                                     avatarToSend = {
-                                        ...avatarToSend,
+                                        ...avatarToSend as {url: string, fileData: File},
                                         fileData: fileDataToSend
                                     }
                                 }

@@ -15,6 +15,7 @@ info_about_me_router = APIRouter(tags=["users"])
 
 @info_about_me_router.get("/info-about-me")
 async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], session: Session = Depends(get_session)):
+    "Finds the current user based on the provided access token and returns the user object from the database."
     payload = verify_access_token(token)
     user_id: str = payload.get("sub") # type: ignore
     if user_id is None:
@@ -27,6 +28,7 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], sessio
 
 @info_about_me_router.get("/my-chat-with/{user_id}", response_model=api_models.ChatRead)
 async def get_my_chat_with_user_id(user_id: int, token: Annotated[str, Depends(oauth2_scheme)], session: Session = Depends(get_session)):
+    "Finds or creates a chat between the current user and another user specified by user_id. Returns the chat object from database."
     payload = verify_access_token(token)
     my_id: str = int(payload.get("sub")) # type: ignore
     if my_id is None:

@@ -49,7 +49,7 @@ export type Group = {
     name: string,
     topic: string,
     members: { username: string, id: number, avatar?: string }[],
-    avatar?: { url: string, fileData: string | File },
+    avatar?: { url: string, fileData: string | File } | string,
     admins: HasUsernameAndId[]
 }
 
@@ -59,18 +59,18 @@ export type User = {
     isOnline: boolean,
     lastSeen: string,
     status: string,
-    avatar?: string,
+    avatar?: { url: string, fileData: string | File } | string,
     birthday: string,
     education: string,
     hobbies: string,
     maritalStatus: string,
-    friends: { username: string, id: number }[],
-    groups: HasNameAndId[],
+    friends: (HasUsernameAndId & { avatar?: string })[],
+    groups: (HasNameAndId & { avatar?: string })[],
     email: string,
     phone: string,
     password: string,
-    followers: HasUsernameAndId[],
-    followed: HasUsernameAndId[]
+    followers: (HasUsernameAndId & { avatar?: string})[],
+    followed: (HasUsernameAndId & { avatar?: string })[]
 }
 
 export type Notification = {

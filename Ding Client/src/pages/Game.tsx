@@ -1,6 +1,7 @@
 import { Card, Inset } from "@radix-ui/themes";
-import { base64ToFile } from "../auxFunctions";
+import { getFileFromBase64Safely } from "../auxFunctions";
 import "./Game.css"
+import { useEffect, useState } from "react";
 
 type GameProps = {
     id: number;
@@ -11,12 +12,15 @@ type GameProps = {
 };
 
 function Game({ id, name, description, preview }: GameProps) {
+    const [previewSrc, setPreviewSrc] = useState("");
+    useEffect(() => {
+        setPreviewSrc(preview ? getFileFromBase64Safely(preview.fileData) : "");
+    }, []);
+
     return (
         <Card className="game-card">
             {preview ? <Inset>
-                <img src={typeof preview.fileData === "string" ? (preview.url === preview.fileData ?
-                    preview.fileData : URL.createObjectURL(base64ToFile(preview.fileData))
-                ) : URL.createObjectURL(preview.fileData)} alt={name} className="game-preview" />
+                <img src={previewSrc} alt={name} className="game-preview" />
             </Inset> : ""}
             <h3 className="heading game-name"><a href={`/games/${id}`} className="game-link">{name}</a></h3>
             <p className="game-description">{description || "У этой игры пока нет описания"}</p>

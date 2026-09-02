@@ -85,7 +85,7 @@ function CreateChatDialog({ isOpen, setIsOpen }: CreateChatProps) {
                             <div className="hint">{30 - chatName.length}</div>
                         </div>
                     </div>
-                    <div className="participants-title"><h3 className="heading">Участники чата</h3> <Button onClick={() => setIsParticipantsSearchOpen(true)} disabled={!infoAboutMe}><PlusIcon />Добавить участника</Button></div>
+                    <div className="participants-title"><h3 className="heading participants-heading">Участники чата</h3> <Button onClick={() => setIsParticipantsSearchOpen(true)} disabled={!infoAboutMe}><PlusIcon />Добавить участника</Button></div>
                     <div className={`add-participants ${isParticipantsSearchOpen && Boolean(infoAboutMe) ? "" : "collapsed"}`}>
                         <label htmlFor="search-user">Имя или ID</label>
                         <TextField.Root id="search-user" value={searchInputValue} onChange={event => {

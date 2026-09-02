@@ -27,7 +27,7 @@ function EditDialog({currentUser, postToEdit, setPostToEdit, setPosts, toasts, s
                         <Dialog.Title className='heading'>Редактировать пост</Dialog.Title>
                         <EditPost currentUserId={currentUser.id} postId={postToEdit.id} postFiles={postToEdit.media} postText={postToEdit.text} onPostsUpdate={setPosts} onClose={() => setPostToEdit(null)} toasts={toasts} setToasts={(val) => {
                             setToasts(val);
-                            setTimeout(() => setToasts(toasts.filter((item, index) => index != toasts.length - 1)), TOAST_DURATION);
+                            setTimeout(() => setToasts(toasts.filter((_, index) => index != toasts.length - 1)), TOAST_DURATION);
                         }} userPageId={userPageId}/>
                     </Dialog.Content>
                     <ToastsContainer toasts={toasts} />

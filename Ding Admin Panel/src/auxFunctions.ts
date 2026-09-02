@@ -71,3 +71,12 @@ export function isSurrogatePair(lead: string, trail: string) {
     const low = trail.charCodeAt(0);
     return (high >= 0xD800 && high <= 0xDBFF) && (low >= 0xDC00 && low <= 0xDFFF);
 }
+
+export function getSrcFromBase64Safely(fileStr: string) {
+    try {
+        const previewAsFile = base64ToFile(fileStr);
+        return URL.createObjectURL(previewAsFile);
+    } catch {
+        return fileStr;
+    }
+}

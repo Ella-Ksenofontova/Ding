@@ -38,11 +38,11 @@ function DeleteDialog({postToDeleteId, setPostToDeleteId, toasts, setToasts, pos
                       response.then(res => {
                         if (res.ok) {
                           setToasts(toasts.concat({ headerContent: "Уведомление", bodyContent: "Пост успешно удалён" }));
-                          setTimeout(() => setToasts(toasts.filter((item, index) => index != toasts.length - 1)), TOAST_DURATION);
+                          setTimeout(() => setToasts(toasts.filter((_, index) => index != toasts.length - 1)), TOAST_DURATION);
                           setPosts(posts.filter(item => item.id !== postToDeleteId));
                           setPostToDeleteId(null);
                         } else {
-                          setToasts(toasts.concat({ headerContent: "Уведомление", bodyContent: "Произошла ошибка" })); setTimeout(() => setToasts(toasts.filter((item, index) => index != toasts.length - 1)), TOAST_DURATION);
+                          setToasts(toasts.concat({ headerContent: "Уведомление", bodyContent: "Произошла ошибка" })); setTimeout(() => setToasts(toasts.filter((_, index) => index != toasts.length - 1)), TOAST_DURATION);
                         }
                       })
                     }} asChild>

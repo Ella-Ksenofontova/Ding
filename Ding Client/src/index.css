@@ -29,3 +29,12 @@ body {
     grid-template-rows: auto 1fr;
     column-gap: 10px;
 }
+
+@media (max-width: 576px) {
+    .page-wrapper {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr;
+        column-gap: 0px;
+        padding-bottom: 60px;
+    }
+}

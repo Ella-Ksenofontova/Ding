@@ -48,3 +48,9 @@
     border-radius: 50%;
     background-color: greenyellow;
 }
+
+@media (max-width: 576px) {
+    .info-about-user {
+        transform: translate(-20px, -20px);
+    }
+}

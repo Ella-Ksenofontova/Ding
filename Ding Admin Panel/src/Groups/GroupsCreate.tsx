@@ -20,16 +20,6 @@ async function getGroupDataByID(id: number) {
 const IMAGE_EXTENSIONS = [".png", ".jpg", ".jpeg", ".webp", ".gif", ".svg"];
 
 function GroupsCreate({ label }: CreateProps) {
-    const files = document.querySelectorAll("img") as NodeListOf<HTMLImageElement>;
-    for (let file of files) {
-        const src = file.src;
-        try {
-            URL.revokeObjectURL(src);
-        } catch {
-            // Here we don't have to do anythiing:)
-        }
-    }
-
     document.title = `${label} группы`
     const { id: groupId } = useParams();
 

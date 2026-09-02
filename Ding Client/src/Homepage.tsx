@@ -3,7 +3,7 @@ import Post from "./Post";
 import CreatePost from './CreatePost';
 import Menu from './Menu';
 import './Homepage.css'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { type Post as PostType, type Toast as ToastType } from './types';
 import ToastsContainer from './ToastsContainer';
 import DeleteDialog from './DeleteDialog';
@@ -26,13 +26,14 @@ function getCookie(name: string) {
 function Homepage() {
   const [posts, setPosts] = useState<(PostType)[]>([]);
   const [allPostsLoaded, setAllPostsLoaded] = useState(false);
-  const [isLoading, setIsLoading] = useState({ posts: true, currentUser: true });
+  const [arePostsLoading, setArePostsLoading] = useState(true);
+  const [isCurrentUserLoading, setIsCurrentUserLoading] = useState(true);
   const [toasts, setToasts] = useState<ToastType[]>([]);
   const [currentUser, setCurrentUser] = useState({ username: "", id: -1 });
   const [postToEdit, setPostToEdit] = useState<PostType | null>(null);
   const [postToDeleteId, setPostToDeleteId] = useState<number | null>(null);
 
-  if (isLoading.posts) {
+  useEffect(() => {
     const postsResponse = fetch(`/api/latest-posts/${posts.length + 1}`);
     postsResponse.then(res => {
       if (res.ok) {
@@ -46,11 +47,11 @@ function Homepage() {
       if (json) setPosts(posts.concat(json));
       if (json.length < POSTS_CHUNK_LENGTH) setAllPostsLoaded(true);
     }).finally(() => {
-      setIsLoading({ ...isLoading, posts: false });
+      setArePostsLoading(false);
     });
-  }
+  }, []);
 
-  if (isLoading.currentUser) {
+  if (isCurrentUserLoading) {
     const userResponse = fetch("/api/info-about-me", {
       headers: {
         "Authorization": `Bearer ${getCookie("jwt-token")}`
@@ -68,7 +69,7 @@ function Homepage() {
       } else {
 
       }
-    }).finally(() => setIsLoading({ ...isLoading, currentUser: false }));
+    }).finally(() => setIsCurrentUserLoading(false));
   }
 
   return (
@@ -81,15 +82,15 @@ function Homepage() {
           <CreatePost currentUserId={currentUser.id} onPostsUpdate={setPosts} />
           <h2 className='heading'>Свежие посты</h2>
           <div className="posts">
-            {isLoading.posts && !posts?.length ? <p>Загрузка...</p> : ""}
+            {arePostsLoading && !posts?.length ? <p>Загрузка...</p> : ""}
             {posts?.length ? posts.map((post) =>
               <Post {...post} key={post.id} currentUser={currentUser} onPostDelete={setPostToDeleteId} onPostEdit={setPostToEdit} />
-            ) : isLoading ? "" : <p>Постов пока нет</p>}
+            ) : arePostsLoading ? "" : <p>Постов пока нет</p>}
           </div>
           {allPostsLoaded ? <div className='all-posts-loaded'><CheckCircledIcon /> Вы посмотрели все посты!</div> :
           posts.length ?
-            <Button className='load-more-button' onClick={() => setIsLoading({...isLoading, posts: true})} disabled={isLoading.posts}>
-              {isLoading.posts ? <img src={loading} alt="Новые посты загружаются" height={20} width={20}/> : ""}
+            <Button className='load-more-button' onClick={() => setArePostsLoading(true)} disabled={arePostsLoading}>
+              {arePostsLoading ? <img src={loading} alt="Новые посты загружаются" height={20} width={20}/> : ""}
               Загрузить ещё
             </Button> : ""}
           {postToEdit ? <EditDialog

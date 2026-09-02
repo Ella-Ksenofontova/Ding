@@ -53,8 +53,10 @@
 
 .participants-title {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: 10px;
+    margin-block: 10px;
 }
 
 .create-chat-buttons-panel, .create-group-buttons-panel {
@@ -92,4 +94,14 @@
 .delete-user, .make-admin {
     box-sizing: border-box;
     margin: 0;
+}
+
+@media (max-width: 768px) {
+    .participants-heading {
+        margin-block: 5px;
+    }
+
+    .participants-title {
+        gap: 3px;
+    }
 }

@@ -11,6 +11,7 @@ users_router = APIRouter(tags=["users"])
 
 @users_router.get("/users")
 def get_users(session: Session = Depends(get_session)) -> list[db_models.User]:
+    "Finds all users stored in database and returns them."
     db_users = list(session.exec(select(db_models.User)).all())
     users = []
 
@@ -30,6 +31,7 @@ def get_users(session: Session = Depends(get_session)) -> list[db_models.User]:
 
 @users_router.get("/users/{id:int}", response_model=api_models.UserGet)
 def get_user_by_id(id: int, session: Session = Depends(get_session)) -> api_models.UserGet:
+    "Tries to find user with given id. Returns it if found, otherwise raises HTTPException with 404 status code."
     db_user = session.exec(select(db_models.User).where(db_models.User.id == id).options(selectinload(getattr(db_models.User, "friends"), getattr(db_models.User, "groups")))).first()
 
     if not db_user:
@@ -48,18 +50,19 @@ def get_user_by_id(id: int, session: Session = Depends(get_session)) -> api_mode
     user.friends = [api_models.UserAPI(id=user.id, username=user.username) for user in friends] #  type: ignore
 
     groups = list(session.exec(select(db_models.Group).where(UserGroupLink.userID == db_user.id, UserGroupLink.groupID == db_models.Group.id)))
-    user.groups = [api_models.GroupAPI(id=group.id, name=group.name) for group in groups] #  type: ignore
+    user.groups = [api_models.GroupAPI(id=group.id, name=group.name, avatar=group.avatar) for group in groups] #  type: ignore
 
     followers = list(session.exec(select(db_models.User).where(FollowLink.user_id == user.id, FollowLink.follower_id == db_models.User.id)).all())
-    user.followers = [api_models.UserAPI(id=user.id, username=user.username) for user in followers] #  type: ignore
+    user.followers = [api_models.UserAPI(id=user.id, username=user.username, avatar=user.avatar) for user in followers] #  type: ignore
 
     followed = list(session.exec(select(db_models.User).where(FollowLink.follower_id == user.id, FollowLink.user_id == db_models.User.id)).all())
-    user.followed = [api_models.UserAPI(id=user.id, username=user.username) for user in followed] #  type: ignore
+    user.followed = [api_models.UserAPI(id=user.id, username=user.username, avatar=user.avatar) for user in followed] #  type: ignore
 
     return user
 
 @users_router.get("/search-users/{name_or_id}")
 def get_users_by_query(name_or_id: str, session: Session = Depends(get_session)) -> list[db_models.User]:
+    "Finds userswhose name or id start with query string."
     users = list(session.exec(select(db_models.User).where(db_models.User.username.startswith(name_or_id))).all())
     if name_or_id.isdigit():    
         users_with_id = list(session.exec(select(db_models.User).where(cast(db_models.User.id, String).like(f"{name_or_id}%"))).all())
@@ -73,6 +76,7 @@ def get_user_friends(user_id: int, session: Session = Depends(get_session)):
 
 @users_router.post("/users")
 def add_user(user_data: api_models.UserPost, session: Session = Depends(get_session)):
+    "Adds user to the database."
     if user_data.id:
         db_user = session.get(db_models.User, user_data.id)
         if db_user:
@@ -114,6 +118,7 @@ def add_user(user_data: api_models.UserPost, session: Session = Depends(get_sess
 
 @users_router.delete("/users/{id}")
 def delete_user(id: int, session: Session = Depends(get_session)):
+    "Deletes user from the database."
     user = session.exec(select(db_models.User).where(db_models.User.id == id)).first()
     if not user:
         raise HTTPException(404, "Такого пользователя не существует")

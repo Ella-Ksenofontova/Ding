@@ -11,6 +11,7 @@ posts_router = APIRouter(tags=["posts"])
 
 @posts_router.get("/posts", response_model=List[api_models.PostRead])
 def get_posts(session: Session = Depends(get_session)) -> list[db_models.Post]:
+    "Returns all posts stored in the database."
     posts = list(session.exec(select(db_models.Post).options(selectinload(getattr(db_models.Post, "usersLiked")))).all())
     response_posts = []
 
@@ -25,6 +26,7 @@ def get_posts(session: Session = Depends(get_session)) -> list[db_models.Post]:
 
 @posts_router.get("/posts/{id:int}", response_model=api_models.PostRead)
 def get_post_by_id(id: int, session: Session = Depends(get_session)) -> api_models.PostRead:
+    "Tries to find post with given id and returns it if found, otherwise raises HTTPError with 404 status code."
     post = session.exec(select(db_models.Post).where(db_models.Post.id == id)).first()
     if not post:
         raise HTTPException(404, "Поста с таким ID не существует")
@@ -36,6 +38,7 @@ def get_post_by_id(id: int, session: Session = Depends(get_session)) -> api_mode
 
 @posts_router.get("/latest-posts/{start}", response_model=List[api_models.PostRead])
 def get_latest_posts(start: int,session: Session = Depends(get_session)):
+    "Returns 5 posts, started from nth latest post, where n is passed as function parameter."
     latest_posts = list(session.exec(select(db_models.Post).order_by(desc(db_models.Post.date))).all())
     response_posts = []
     
@@ -51,6 +54,7 @@ def get_latest_posts(start: int,session: Session = Depends(get_session)):
 
 @posts_router.get("/user-posts/{user_id}", response_model=List[api_models.PostRead])
 def get_user_posts(user_id: int, session: Session = Depends(get_session)) -> List[api_models.PostRead]:
+    "Finds posts created by user with given id."
     db_posts = session.exec(select(db_models.Post).where(db_models.Post.userID == user_id).order_by(desc(db_models.Post.date)))
     response_posts = []
         
@@ -64,6 +68,7 @@ def get_user_posts(user_id: int, session: Session = Depends(get_session)) -> Lis
 
 @posts_router.get("/group-posts/{group_id}", response_model=List[api_models.PostRead])
 def get_group_post(group_id: int, session: Session = Depends(get_session)):
+    "Finds posts created by group with given id."
     db_posts = session.exec(select(db_models.Post).where(db_models.Post.groupID == group_id).order_by(desc(db_models.Post.date)))
     response_posts = []
     for post in db_posts:
@@ -76,6 +81,7 @@ def get_group_post(group_id: int, session: Session = Depends(get_session)):
 
 @posts_router.get("/search-posts/{text_or_id}", response_model=List[api_models.PostRead])
 def search_posts_by_text_or_id(text_or_id: str, session: Session = Depends(get_session)):
+    "Finds posts that have text or id starting with query string."
     posts = list(session.exec(select(db_models.Post).where(db_models.Post.text != None, db_models.Post.text.startswith(text_or_id))).all()) # type: ignore
     if text_or_id.isdigit():
         posts_with_id = list(session.exec(select(db_models.Post).where(cast(db_models.Post.id, String).like(f"{text_or_id}%"))).all())
@@ -84,6 +90,7 @@ def search_posts_by_text_or_id(text_or_id: str, session: Session = Depends(get_s
 
 @posts_router.post("/posts")
 def add_post(post_data: api_models.PostPost, session: Session = Depends(get_session)):
+    "Adds post to the database."
     if post_data.id:
         db_post = session.get(db_models.Post, post_data.id)
         if db_post:
@@ -115,6 +122,7 @@ def add_post(post_data: api_models.PostPost, session: Session = Depends(get_sess
 
 @posts_router.delete("/posts/{id}")
 def delete_post(id: int, session: Session = Depends(get_session)):
+    "Removes post from the database."
     post = session.exec(select(db_models.Post).where(db_models.Post.id == id)).first()
     if not post:
         raise HTTPException(404, "Такого поста не существует")

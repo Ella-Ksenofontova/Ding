@@ -2,7 +2,7 @@ import Table from "react-bootstrap/Table"
 import Button from "react-bootstrap/Button"
 import { Form } from "react-bootstrap"
 import { Plus } from "react-bootstrap-icons"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Header from "../Header"
 import { type Toast as ToastType, type HasUsernameAndId } from "../types"
 import CustomToastsContainer from "../CustomToastsContainer"
@@ -62,9 +62,9 @@ function ChatsViewPage() {
         setLoading(false);
     }
 
-    if (loading) {
+    useEffect(() => {
         getChats();
-    }
+    }, []);
 
     function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
         const text = event.target.value;

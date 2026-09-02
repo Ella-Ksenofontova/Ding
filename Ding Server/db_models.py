@@ -17,6 +17,7 @@ def clean_base64(v: Any) -> Any:
 CleanBase64Str = Annotated[str, BeforeValidator(clean_base64), PlainSerializer(lambda val: str(val), return_type=str)]
 
 class AttachedFile(BaseModel):
+    "This class represents a file that can be attached to a post or message."
     url: HttpUrl | str
     fileData: HttpUrl | CleanBase64Str
     @field_serializer("url", "fileData")
@@ -24,6 +25,7 @@ class AttachedFile(BaseModel):
         return str(val)
 
 class Chat(SQLModel, table=True):
+    "This class represents a chat between users."
     __tablename__: str = "Chats" # type: ignore
     id: int = Field(default=None, primary_key=True)
     name: str
@@ -33,6 +35,7 @@ class Chat(SQLModel, table=True):
     admins: List["User"] = Relationship(link_model=ChatAdminLink)
 
 class Comment(SQLModel, table=True):
+    "This class represents a comment made by a user on a post."
     __tablename__: str = "Comments" # type: ignore
     model_config = ConfigDict(ser_json_bytes='base64')
     id: Optional[int] = Field(default=None, primary_key=True)
@@ -44,6 +47,7 @@ class Comment(SQLModel, table=True):
 
 
 class Group(SQLModel, table=True):
+    "This class represents a group of users."
     __tablename__: str = "Groups" # type: ignore
     model_config = ConfigDict(ser_json_bytes='base64', val_json_bytes='base64')
     id: Optional[int] = Field(default=None, primary_key=True)
@@ -54,6 +58,7 @@ class Group(SQLModel, table=True):
     admins: List["User"] = Relationship(link_model=GroupAdminLink)
 
 class Message(SQLModel, table=True):
+    "This class represents a message sent by a user in a chat."
     __tablename__: str = "Messages" # type: ignore
     model_config = ConfigDict(ser_json_bytes='base64')
     id: Optional[int] = Field(default=None, primary_key=True)
@@ -64,6 +69,7 @@ class Message(SQLModel, table=True):
     imitate_generation: Optional[bool]
 
 class Notification(SQLModel, table=True):
+    "This class represents a notification sent to a user."
     __tablename__: str = "Notifications" # type: ignore
     id: Optional[int] = Field(default=None, primary_key=True)
     text: str
@@ -71,6 +77,7 @@ class Notification(SQLModel, table=True):
     userID: int = Field(foreign_key="Users.id")
 
 class Post(SQLModel, table=True):
+    "This class represents a post made by a user or a group."
     model_config = ConfigDict(ser_json_bytes='base64')
     __tablename__: str = "Posts" # type: ignore
     id: Optional[int] = Field(default=None, primary_key=True)
@@ -83,6 +90,7 @@ class Post(SQLModel, table=True):
     groupID: Optional[int]
 
 class User(SQLModel, table=True):
+    "This class represents a user in the system."
     __tablename__: str = "Users" # type: ignore
     model_config = ConfigDict(ser_json_bytes='base64', val_json_bytes='base64')
     id: Optional[int] = Field(default=None, primary_key=True)
@@ -126,6 +134,7 @@ class User(SQLModel, table=True):
 
 
 class Game(SQLModel, table=True):
+    "This class represents a game that can be played by users."
     __tablename__: str = "Games" # type: ignore
     model_config = ConfigDict(ser_json_bytes='base64')
     id: Optional[int] = Field(default=None, primary_key=True)

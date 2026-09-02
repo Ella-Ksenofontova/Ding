@@ -1,4 +1,4 @@
-import { useState, type SetStateAction } from "react";
+import { useEffect, useState, type SetStateAction } from "react";
 import { type Message, type Chat as ChatType, type Toast, type User } from "../types";
 import { base64ToFile } from "../auxFunctions";
 import noProfilePhoto from "../assets/noprofilephoto.png";
@@ -33,7 +33,7 @@ function Chat({ chatInfo, currentUserId, toasts, setToasts }: ChatProps) {
     const [isLoading, setIsLoading] = useState(true);
     const [avatar, setAvatar] = useState<{url: string, fileData: string | File} | null>(chatInfo.avatar || null);
 
-    if (isLoading) {
+    useEffect(() => {
         const response = fetch(`/api/chat-messages/${chatInfo.id}`);
         response.then(res => {
             if (res.ok) {
@@ -44,7 +44,7 @@ function Chat({ chatInfo, currentUserId, toasts, setToasts }: ChatProps) {
         }).then(json => {
             if (json) setMessages(json);
         }).finally(() => setIsLoading(false));
-    }
+    }, []);
 
     function updateAvatar(userId: number) {
         const response = fetch(`/api/users/${userId}`);
@@ -52,13 +52,13 @@ function Chat({ chatInfo, currentUserId, toasts, setToasts }: ChatProps) {
             if (res.ok) return res.json();
         }).then((data: User) => {
             if (data) {
-                const avatar = data.avatar;
-                if (avatar) {
+                const avatarFromServer = data.avatar;
+                if (avatarFromServer) {
                     try {
-                        const fileData = base64ToFile(avatar);
+                        const fileData = base64ToFile(avatarFromServer as string);
                         setAvatar({ url: "Аватар", fileData: fileData });
                     } catch {
-                        setAvatar({ url: avatar, fileData: avatar });
+                        setAvatar({ url: avatarFromServer as string, fileData: avatarFromServer as string });
                     }
                 }
             }

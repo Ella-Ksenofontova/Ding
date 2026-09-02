@@ -65,7 +65,7 @@ function SearchUsers() {
                         {
                             searchResults.map(res =>
                                 <li className="search-result" key={res.id}>
-                                    <Avatar src={getFileFromBase64Safely(res.avatar || "")} fallback={res.username[0]} className="user-avatar" />
+                                    <Avatar src={getFileFromBase64Safely(res.avatar as string || "")} fallback={res.username[0]} className="user-avatar" />
                                     <h3 className="username heading"><a href={`/users/${res.id}`} className="user-link">{res.username}</a></h3>
                                 </li>
                             )
