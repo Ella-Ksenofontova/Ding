@@ -12,7 +12,7 @@ Ding - "Соцсеть" для кукол
 Кстати, в VS Code есть специальное расширение, добавляющее кнопки запуска сервисом прямо в файл! [Скачать расширение](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-containers)
 3. *Дополнительно*: Вы можете импортировать базу данных, чтобы не заполнять всё с нуля. Для этого скачайте файл (ссылка ниже) и наберите в терминале команду: 
 `docker exec -i postgres psql -U postgres -d postgres < backup.sql`  
-[Скачать базу данных](https://drive.google.com/file/d/1vTBPpcIXkLXHArnZx_4-6RD1fbPRpqfZ/view?usp=sharing)  
+[Скачать базу данных](https://drive.google.com/file/d/1egc2GKVz5tocSLeAI4QEX13AlO-q1So7/view?usp=drive_link)  
 Для корректной работы с ней также понадобится скачать два SWF-файла.  
 [Папка с SWF-файлами](https://drive.google.com/drive/folders/1Fy8oLOjPqDZbtP7hQwr7_eSs4qV5W2cX?usp=drive_link)
 

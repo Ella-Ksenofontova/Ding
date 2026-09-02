@@ -6,11 +6,11 @@ import Header from "../Header";
 import ToastsContainer from "../ToastsContainer";
 import MyProfile from "./MyProfile";
 import { getCookie, getFileFromBase64Safely } from "../auxFunctions";
-import { TOAST_DURATION } from "../aux_constants";
+import { TOAST_DURATION, MAX_RELATIONSHIPS_SHOWN } from "../aux_constants";
 import "./UserProfile.css";
 import Menu from "../Menu";
 import { useParams } from "react-router";
-import { Button } from "@radix-ui/themes";
+import { Button, Dialog } from "@radix-ui/themes";
 import { ChatBubbleIcon } from "@radix-ui/react-icons";
 import noProfileImage from "../assets/noprofilephoto.png";
 
@@ -174,40 +174,88 @@ function UserProfile() {
                             }
                         </div>
                         <div className="relationship-wrapper">
-                            <h2 className="heading">Друзья</h2>
+                            <h3 className="heading">Друзья</h3>
                             {
                                 infoAboutUser?.friends.length === 0 ? <p className="no-relationships">У пользователя пока нет друзей</p> :
                                     <ul className="relationship-list">
-                                        {infoAboutUser?.friends.slice(0, 5).map(friend => (
+                                        {infoAboutUser?.friends.slice(0, MAX_RELATIONSHIPS_SHOWN).map(friend => (
                                             <li key={friend.id} className="relationship-item">
                                                 <img src={getFileFromBase64Safely(friend.avatar || noProfileImage)} alt={`Аватар пользователя ${friend.username}`} className="user-avatar" />
                                                 <a href={`/users/${friend.id}`}>{friend.username}</a>
                                             </li>
                                         ))}
+                                        {Number(infoAboutUser?.friends.length) > MAX_RELATIONSHIPS_SHOWN ?
+                                            <Dialog.Root>
+                                                <Dialog.Trigger><Button>Посмотреть всех</Button></Dialog.Trigger>
+                                                <Dialog.Content>
+                                                    <ul className="relationship-list dialog-relationships-list">
+                                                        {infoAboutUser?.friends.map(friend => (
+                                                            <li key={friend.id} className="relationship-item">
+                                                                <img src={getFileFromBase64Safely(friend.avatar || noProfileImage)} alt={`Аватар пользователя ${friend.username}`} className="user-avatar" />
+                                                                <a href={`/users/${friend.id}`}>{friend.username}</a>
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                    <Dialog.Close><Button>ОК</Button></Dialog.Close>
+                                                </Dialog.Content>
+                                            </Dialog.Root>
+                                            : ""}
                                     </ul>
                             }
-                            <h2 className="heading">Подписчики</h2>
+                            <h3 className="heading">Подписчики</h3>
                             {
                                 infoAboutUser?.followers.length === 0 ? <p className="no-relationships">У пользователя пока нет подписчиков</p> :
                                     <ul className="relationship-list">
-                                        {infoAboutUser?.followers.slice(0, 5).map(follower => (
+                                        {infoAboutUser?.followers.slice(0, MAX_RELATIONSHIPS_SHOWN).map(follower => (
                                             <li key={follower.id} className="relationship-item">
                                                 <img src={getFileFromBase64Safely(follower.avatar || noProfileImage)} alt={`Аватар пользователя ${follower.username}`} className="user-avatar" />
                                                 <a href={`/users/${follower.id}`}>{follower.username}</a>
                                             </li>
                                         ))}
+                                        {Number(infoAboutUser?.followers.length) > MAX_RELATIONSHIPS_SHOWN ?
+                                            <Dialog.Root>
+                                                <Dialog.Trigger><Button>Посмотреть всех</Button></Dialog.Trigger>
+                                                <Dialog.Content>
+                                                    <ul className="relationship-list dialog-relationships-list">
+                                                        {infoAboutUser?.followers.map(follower => (
+                                                            <li key={follower.id} className="relationship-item">
+                                                                <img src={getFileFromBase64Safely(follower.avatar || noProfileImage)} alt={`Аватар пользователя ${follower.username}`} className="user-avatar" />
+                                                                <a href={`/users/${follower.id}`}>{follower.username}</a>
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                    <Dialog.Close><Button>ОК</Button></Dialog.Close>
+                                                </Dialog.Content>
+                                            </Dialog.Root>
+                                            : ""}
                                     </ul>
                             }
-                            <h2 className="heading">Группы</h2>
+                            <h3 className="heading">Группы</h3>
                             {
                                 infoAboutUser?.groups.length === 0 ? <p className="no-relationships">Пользователь пока не состоит ни в одной группе</p> :
                                     <ul className="relationship-list">
-                                        {infoAboutUser?.groups.slice(0, 5).map(group => (
+                                        {infoAboutUser?.groups.slice(0, MAX_RELATIONSHIPS_SHOWN).map(group => (
                                             <li key={group.id} className="relationship-item">
                                                 <img src={getFileFromBase64Safely(group.avatar || noProfileImage)} alt={`Аватар группы ${group.name}`} className="group-avatar" />
                                                 <a href={`/groups/${group.id}`}>{group.name}</a>
                                             </li>
                                         ))}
+                                        {Number(infoAboutUser?.followers.length) > MAX_RELATIONSHIPS_SHOWN ?
+                                            <Dialog.Root>
+                                                <Dialog.Trigger><Button>Посмотреть всех</Button></Dialog.Trigger>
+                                                <Dialog.Content>
+                                                    <ul className="relationship-list dialog-relationships-list">
+                                                        {infoAboutUser?.groups.map(group => (
+                                                            <li key={group.id} className="relationship-item">
+                                                                <img src={getFileFromBase64Safely(group.avatar || noProfileImage)} alt={`Аватар группы ${group.name}`} className="user-avatar" />
+                                                                <a href={`/groups/${group.id}`}>{group.name}</a>
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                    <Dialog.Close><Button>ОК</Button></Dialog.Close>
+                                                </Dialog.Content>
+                                            </Dialog.Root>
+                                            : ""}
                                     </ul>
                             }
                         </div>

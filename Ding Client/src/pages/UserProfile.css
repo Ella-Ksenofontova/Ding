@@ -40,6 +40,11 @@
     margin-top: 10px;
 }
 
+.dialog-relationships-list {
+    max-height: 60vh;
+    overflow: auto;
+}
+
 @media (max-width: 768px) {
     .posts-and-relationships {
         flex-direction: column-reverse;
