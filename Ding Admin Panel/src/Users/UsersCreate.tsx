@@ -273,19 +273,19 @@ function UsersCreate({ label }: CreateProps) {
                             <div>
                                 <Form.Label>Друзья</Form.Label>
                             </div>
-                            <AddByNameOrId entities={friends} ChangeEntities={setFriends} />
+                            <AddByNameOrId entities={friends} ChangeEntities={setFriends} condition={item => !followers.concat(followed).concat({id: Number(userId), name: username}).map(u => u.id).includes(item.id)}/>
                         </div>
                         <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginTop: "12px" }}>
                             <div>
                                 <Form.Label>Подписчики</Form.Label>
                             </div>
-                            <AddByNameOrId entities={followers} ChangeEntities={setFollowers} condition={item => item.id !== Number(userId || 0)}/>
+                            <AddByNameOrId entities={followers} ChangeEntities={setFollowers} condition={item => !friends.concat(followed).concat({id: Number(userId), name: username}).map(u => u.id).includes(item.id)}/>
                         </div>
                         <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginTop: "12px" }}>
                             <div>
                                 <Form.Label>Пользователи, на которых {username} подписан(а)</Form.Label>
                             </div>
-                            <AddByNameOrId entities={followed}  ChangeEntities={setFollowed} condition={item => item.id !== Number(userId || 0)} />
+                            <AddByNameOrId entities={followed}  ChangeEntities={setFollowed} condition={item => !friends.concat(followers).concat({id: Number(userId), name: username}).map(u => u.id).includes(item.id)} />
                         </div>
                         <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginTop: "12px" }}>
                             <div>
