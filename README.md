@@ -13,7 +13,7 @@ Ding - "Соцсеть" для кукол
 3. *Дополнительно*: Вы можете импортировать какую-либо версию базы данных, чтобы не заполнять всё с нуля. Для этого скачайте один из файлов папки (ссылка ниже) и наберите в терминале команду: 
 `docker exec -i postgres psql -U postgres -d postgres < <db_file_name>.sql`  
 [Папка с версиями базы данных](https://drive.google.com/drive/folders/1azMUIUseMmlXjZu__bXg6CA7N8c9HWIg?usp=drive_link)  
-Для корректной работы с ней также понадобится скачать два SWF-файла.  
+Для корректной работы с ней также понадобится скачать два SWF-файла и переместить их в папку *Ding Client/public*.  
 [Папка с SWF-файлами](https://drive.google.com/drive/folders/1Fy8oLOjPqDZbtP7hQwr7_eSs4qV5W2cX?usp=drive_link)
 
 Контактная информация
