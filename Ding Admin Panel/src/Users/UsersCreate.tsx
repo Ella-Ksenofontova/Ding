@@ -279,13 +279,13 @@ function UsersCreate({ label }: CreateProps) {
                             <div>
                                 <Form.Label>Подписчики</Form.Label>
                             </div>
-                            <AddByNameOrId entities={followers} ChangeEntities={() => setFollowers(followers => followers.filter(item => item.id !== Number(userId || 0)))} />
+                            <AddByNameOrId entities={followers} ChangeEntities={setFollowers} condition={item => item.id !== Number(userId || 0)}/>
                         </div>
                         <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginTop: "12px" }}>
                             <div>
                                 <Form.Label>Пользователи, на которых {username} подписан(а)</Form.Label>
                             </div>
-                            <AddByNameOrId entities={followed} ChangeEntities={() => setFollowed(followed => followed.filter(item => item.id !== Number(userId || 0)))} />
+                            <AddByNameOrId entities={followed}  ChangeEntities={setFollowed} condition={item => item.id !== Number(userId || 0)} />
                         </div>
                         <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginTop: "12px" }}>
                             <div>

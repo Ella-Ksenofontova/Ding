@@ -78,8 +78,6 @@ class UserGet(BaseModel):
     followers: List[UserAPI] = []
     followed: List[UserAPI] = []
     groups: List[GroupAPI] = []
-    userHash: str
-    password: str
     email: Optional[str]
     phone: Optional[PhoneNumber]
 
