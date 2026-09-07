@@ -78,6 +78,10 @@ class UserGet(BaseModel):
     followers: List[UserAPI] = []
     followed: List[UserAPI] = []
     groups: List[GroupAPI] = []
+    
+class UserGetAdmin(UserGet):
+    "This class represents a user in the API GET responses from admin panel. Comparing to UserGet, it has 3 additional fields."
+    password: str
     email: Optional[str]
     phone: Optional[PhoneNumber]
 

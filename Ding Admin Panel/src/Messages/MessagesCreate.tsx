@@ -55,7 +55,7 @@ function MessagesCreate({ label }: CreateProps) {
     }
 
     async function getSenderName(senderId: number) {
-        const response = await fetch(`/api/users/${senderId}`);
+        const response = await fetch(`/api/users-admin/${senderId}`);
         if (response.ok) {
             const json = await response.json();
             return json.username;

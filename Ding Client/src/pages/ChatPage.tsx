@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { getCookie, base64ToFile, isSurrogatePair, fileToBase64, getFileFromBase64Safely } from "../auxFunctions";
 import { IMAGE_EXTENSIONS, VIDEO_EXTENSIONS, AUDIO_EXTENSIONS } from "../aux_constants";
-import type { Toast, Chat, Message, User } from "../types";
+import type { Toast, Chat, Message, User, HasUsernameAndId } from "../types";
 import { useParams } from "react-router";
 import Header from "../Header";
 import Menu from "../Menu";
@@ -126,7 +126,7 @@ function ChatPage() {
         const response = fetch(`/api/users/${userId}`);
         response.then(res => {
             if (res.ok) return res.json();
-        }).then((data: User) => {
+        }).then((data: HasUsernameAndId & {avatar?: string}) => {
             if (data) {
                 const avatarFromServer = data.avatar;
                 if (avatarFromServer) {

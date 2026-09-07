@@ -17,7 +17,7 @@ async function getNotificationDataByID(id: number) {
 }
 
 async function getUserName(userId: number) {
-    const response = await fetch(`/api/users/${userId}`);
+    const response = await fetch(`/api/users-admin/${userId}`);
     if (response.ok) {
         const json = await response.json();
         return json.username;

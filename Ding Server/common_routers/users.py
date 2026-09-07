@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import List
 from sqlalchemy.orm import selectinload
 from fastapi import APIRouter, Depends, HTTPException, Response
 from sqlmodel import Session, String, and_, cast, col, or_, select
@@ -29,36 +28,47 @@ def get_users(session: Session = Depends(get_session)) -> list[db_models.User]:
 
     return users
 
-@users_router.get("/users/{id:int}", response_model=api_models.UserGet)
-def get_user_by_id(id: int, session: Session = Depends(get_session)) -> api_models.UserGet:
-    "Tries to find user with given id. Returns it if found, otherwise raises HTTPException with 404 status code."
+def get_user_with_given_model(id: int, session: Session = Depends(get_session), model: type[api_models.UserGet] | type[api_models.UserGetAdmin] = api_models.UserGet):
+    "Tries to find user with given id. If found, returns result according to given model (see docs of models), otherwise raises HTTPException with status code 404."
     db_user = session.exec(select(db_models.User).where(db_models.User.id == id).options(selectinload(getattr(db_models.User, "friends"), getattr(db_models.User, "groups")))).first()
-
+    
     if not db_user:
         raise HTTPException(404, "Пользователя с таким ID не существует")
-
-    user = api_models.UserGet.model_construct(**db_user.model_dump(exclude={"birthday", "lastSeen", "groups", "friends", "followers", "followed"}))
-
+    
+    user = model.model_construct(**db_user.model_dump(exclude={"birthday", "lastSeen", "groups", "friends", "followers", "followed"}))
+    
     if db_user.birthday:
         birthday = db_user.birthday.isoformat()
         user.birthday = birthday
-
+    
     last_seen = db_user.lastSeen.isoformat()
     user.lastSeen = last_seen
-
+    
     friends = list(session.exec(select(db_models.User).where(or_(and_(FriendsLink.firstFriendID == db_user.id, FriendsLink.secondFriendID == db_models.User.id), and_(FriendsLink.firstFriendID == db_models.User.id, FriendsLink.secondFriendID == db_user.id)))))
     user.friends = [api_models.UserAPI(id=user.id, username=user.username) for user in friends] #  type: ignore
-
+    
     groups = list(session.exec(select(db_models.Group).where(UserGroupLink.userID == db_user.id, UserGroupLink.groupID == db_models.Group.id)))
     user.groups = [api_models.GroupAPI(id=group.id, name=group.name, avatar=group.avatar) for group in groups] #  type: ignore
-
+    
     followers = list(session.exec(select(db_models.User).where(FollowLink.user_id == user.id, FollowLink.follower_id == db_models.User.id)).all())
     user.followers = [api_models.UserAPI(id=user.id, username=user.username, avatar=user.avatar) for user in followers] #  type: ignore
-
+    
     followed = list(session.exec(select(db_models.User).where(FollowLink.follower_id == user.id, FollowLink.user_id == db_models.User.id)).all())
     user.followed = [api_models.UserAPI(id=user.id, username=user.username, avatar=user.avatar) for user in followed] #  type: ignore
-
+    
     return user
+
+@users_router.get("/users/{id:int}", response_model=api_models.UserGet)
+def get_user_by_id(id: int, session: Session = Depends(get_session)) -> api_models.UserGet:
+    "Tries to find user with given id. Returns it if found, otherwise raises HTTPException with 404 status code."
+    return get_user_with_given_model(id, session)
+    
+
+@users_router.get("/users-admin/{id:int}", response_model=api_models.UserGetAdmin)
+def get_user_by_id_admin(id: int, session: Session = Depends(get_session)):
+    "Tries to find user with given id. Returns it if found, otherwise raises HTTPException with 404 status code."
+    return get_user_with_given_model(id, session, api_models.UserGetAdmin)
+
 
 @users_router.get("/search-users/{name_or_id}")
 def get_users_by_query(name_or_id: str, session: Session = Depends(get_session)) -> list[db_models.User]:

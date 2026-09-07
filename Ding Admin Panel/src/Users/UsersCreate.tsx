@@ -10,7 +10,7 @@ import { IMAGE_EXTENSIONS } from "../auxConstants";
 import { fileToBase64, base64ToFile } from "../auxFunctions";
 
 async function getUserDataByID(id: number) {
-    const response = await fetch(`/api/users/${id}`);
+    const response = await fetch(`/api/users-admin/${id}`);
     if (!response.ok) {
         const errorDetails = await response.json();
         throw new Error(errorDetails.detail || "Ошибка загрузки пользователя");

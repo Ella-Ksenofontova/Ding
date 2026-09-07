@@ -1,5 +1,5 @@
 import { useEffect, useState, type SetStateAction } from "react";
-import { type Message, type Chat as ChatType, type Toast, type User } from "../types";
+import { type Message, type Chat as ChatType, type Toast, type User, type HasUsernameAndId } from "../types";
 import { base64ToFile } from "../auxFunctions";
 import noProfilePhoto from "../assets/noprofilephoto.png";
 import { IMAGE_EXTENSIONS, VIDEO_EXTENSIONS, AUDIO_EXTENSIONS } from "../aux_constants";
@@ -50,7 +50,7 @@ function Chat({ chatInfo, currentUserId, toasts, setToasts }: ChatProps) {
         const response = fetch(`/api/users/${userId}`);
         response.then(res => {
             if (res.ok) return res.json();
-        }).then((data: User) => {
+        }).then((data: HasUsernameAndId & {avatar?: string}) => {
             if (data) {
                 const avatarFromServer = data.avatar;
                 if (avatarFromServer) {
