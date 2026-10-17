@@ -1,2 +1,34 @@
 *.sql
-.vscode
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.local
+venv/
+node_modules/
+
+# Build
+__pycache__/
+*.pyc
+*.pyo
+target/
+build/
+dist/
+
+# Logs
+*.log
+logs/
+
+# Sensitive data
+*.pem
+*.key
+secrets/
